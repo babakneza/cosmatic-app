@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+npm-debug.log
+npm-error.log
+yarn-error.log
+package-lock.json
+
+# Build outputs
+.next
+build
+dist
+out
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+playwright-report
+coverage
+.playwright
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp
+temp
+
+# Documentation
+README.md
+DEPLOYMENT*.md
+SETUP*.md
+*.md
+
+# Other
+.zencoder
+.eslintrc.json
+playwright.config.ts
+tsconfig.json
+next.config.js

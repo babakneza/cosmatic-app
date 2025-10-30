@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cosmatic-app
+    network_mode: "host"
+    environment:
+      # Next.js Configuration
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+
+      # Directus API Configuration - Use localhost since network_mode: host
+      - NEXT_PUBLIC_DIRECTUS_URL=https://admin.buyjan.com
+      - NEXT_PUBLIC_SITE_URL=https://buyjan.com
+      - DIRECTUS_API_TOKEN=${DIRECTUS_API_TOKEN}
+      - NEXT_PUBLIC_DIRECTUS_API_TOKEN=${NEXT_PUBLIC_DIRECTUS_API_TOKEN}
+
+      # Optional Analytics
+      - NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID:-}
+
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    depends_on:
+      - directus
+
+  directus:
+    image: directus/directus:latest
+    container_name: directus
+    network_mode: "host"
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      # Database
+      - DB_CLIENT=pg
+      - DB_HOST=localhost
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-directus}
+      - DB_USER=${DB_USER:-directususer}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+      # Security Keys
+      - SECRET=${DIRECTUS_SECRET}
+      - KEY=${DIRECTUS_KEY}
+
+      # Admin Credentials
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@buyjan.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+
+      # Public URL
+      - PUBLIC_URL=https://admin.buyjan.com
+      - CORS_ENABLED=true
+      - CORS_ORIGIN=https://buyjan.com
+
+      # Public Registration
+      - PUBLIC_REGISTRATION=true
+      - PUBLIC_ROLE=${PUBLIC_ROLE}
+
+      # Token TTL
+      - ACCESS_TOKEN_TTL=60m
+      - REFRESH_TOKEN_TTL=7d
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8055/admin" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

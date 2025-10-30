@@ -1,0 +1,187 @@
+
+> cosmatic-app-oman@0.1.0 type-check
+> tsc --noEmit
+
+src/app/[locale]/products/[slug]/page.tsx(85,63): error TS18046: 'parseError' is of type 'unknown'.
+src/app/[locale]/products/[slug]/page.tsx(288,56): error TS2339: Property 'startsWith' does not exist on type 'never'.
+src/app/[locale]/products/[slug]/page.tsx(289,87): error TS2339: Property 'substring' does not exist on type 'never'.
+src/app/[locale]/products/[slug]/page.tsx(686,72): error TS18048: 'product.categories' is possibly 'undefined'.
+src/app/[locale]/search/components/SearchContent.tsx(52,35): error TS2532: Object is possibly 'undefined'.
+src/app/[locale]/search/components/SearchContent.tsx(53,35): error TS2532: Object is possibly 'undefined'.
+src/app/[locale]/test-product/page.tsx(83,63): error TS18046: 'parseError' is of type 'unknown'.
+src/app/[locale]/test-product/page.tsx(220,56): error TS2339: Property 'startsWith' does not exist on type 'never'.
+src/app/[locale]/test-product/page.tsx(221,87): error TS2339: Property 'substring' does not exist on type 'never'.
+src/app/[locale]/test-product/page.tsx(410,51): error TS2339: Property 'startsWith' does not exist on type 'never'.
+src/app/[locale]/test-product/page.tsx(412,114): error TS2339: Property 'substring' does not exist on type 'never'.
+src/app/[locale]/test-product/page.tsx(424,81): error TS2339: Property 'directus_files_id' does not exist on type 'ProductImage'.
+src/app/[locale]/test-product/page.tsx(425,78): error TS2339: Property 'directus_files_id' does not exist on type 'ProductImage'.
+src/app/[locale]/test-product/page.tsx(584,72): error TS18048: 'product.categories' is possibly 'undefined'.
+src/app/api/categories/route.ts(31,23): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/app/api/countries/[countryId]/route.ts(39,22): error TS2345: Argument of type '"countries"' is not assignable to parameter of type 'never'.
+src/app/api/countries/route.ts(27,23): error TS2345: Argument of type '"countries"' is not assignable to parameter of type 'never'.
+src/app/api/search/popular/route.ts(11,27): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/app/api/search/route.ts(37,35): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/app/api/search/route.ts(73,35): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/components/account/AddressForm.tsx(102,29): error TS2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+src/components/account/AddressForm.tsx(124,25): error TS2345: Argument of type '(prev: { type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }) => { ...; }' is not assignable to parameter of type 'SetStateAction<{ type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }>'.
+  Type '(prev: { type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }) => { ...; }' is not assignable to type '(prevState: { type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }) => { ...; }'.
+    Call signature return types '{ country: number; type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; is_default: boolean; }' and '{ type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }' are incompatible.
+      The types of 'country' are incompatible between these types.
+        Type 'number' is not assignable to type 'string'.
+src/components/account/AddressForm.tsx(165,69): error TS2345: Argument of type '{ type: string; first_name: string; last_name: string; company: string; address_line_1: string; address_line_2: string; city: string; state: string; postal_code: string; country: string; is_default: boolean; }' is not assignable to parameter of type 'Partial<CustomerAddress>'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type '"shipping" | "billing" | "both" | undefined'.
+src/components/account/AddressForm.tsx(168,45): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string'.
+  Type 'number' is not assignable to type 'string'.
+src/components/account/AddressList.tsx(314,73): error TS2339: Property 'name' does not exist on type 'never'.
+src/components/account/WishlistView.tsx(59,86): error TS2554: Expected 1 arguments, but got 2.
+src/components/account/WishlistView.tsx(68,26): error TS2345: Argument of type '((WishlistItem & { product?: Product | undefined; }) | { productData: { data: any; }; id: string; customer: string; product: string & Product; date_added?: string | undefined; created_at?: string | undefined; })[]' is not assignable to parameter of type 'SetStateAction<WishlistItemWithProduct[]>'.
+  Type '((WishlistItem & { product?: Product | undefined; }) | { productData: { data: any; }; id: string; customer: string; product: string & Product; date_added?: string | undefined; created_at?: string | undefined; })[]' is not assignable to type 'WishlistItemWithProduct[]'.
+    Type '(WishlistItem & { product?: Product | undefined; }) | { productData: { data: any; }; id: string; customer: string; product: string & Product; date_added?: string | undefined; created_at?: string | undefined; }' is not assignable to type 'WishlistItemWithProduct'.
+      Type '{ productData: { data: any; }; id: string; customer: string; product: string & Product; date_added?: string; created_at?: string; }' is not assignable to type 'WishlistItemWithProduct'.
+        Types of property 'productData' are incompatible.
+          Type '{ data: any; }' is missing the following properties from type 'Product': id, name, slug, description, and 9 more.
+src/components/account/WishlistView.tsx(98,21): error TS2353: Object literal may only specify known properties, and 'quantity' does not exist in type 'Product'.
+src/components/account/WishlistView.tsx(99,57): error TS2339: Property 'url' does not exist on type 'string'.
+src/components/account/WishlistView.tsx(275,69): error TS2339: Property 'url' does not exist on type 'string'.
+src/components/account/WishlistView.tsx(277,67): error TS2339: Property 'url' does not exist on type 'string'.
+src/components/category/CategoryShowcase.tsx(74,45): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/checkout/OrderReview.tsx(59,41): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(63,95): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(131,106): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(159,97): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(165,101): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(172,96): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/OrderReview.tsx(178,100): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/checkout/ShippingAddressForm.tsx(174,21): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/checkout/ShippingAddressForm.tsx(181,21): error TS2322: Type 'string | number | Country | undefined' is not assignable to type 'string | number | undefined'.
+  Type 'Country' is not assignable to type 'string | number | undefined'.
+src/components/checkout/ShippingAddressForm.tsx(182,50): error TS2345: Argument of type 'string | number | Country | undefined' is not assignable to parameter of type 'string | number | undefined'.
+  Type 'Country' is not assignable to type 'string | number | undefined'.
+src/components/checkout/ShippingAddressForm.tsx(183,45): error TS2345: Argument of type 'string | number | Country | undefined' is not assignable to parameter of type 'string | number | undefined'.
+  Type 'Country' is not assignable to type 'string | number | undefined'.
+src/components/checkout/ShippingAddressForm.tsx(251,17): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/checkout/ShippingAddressForm.tsx(253,17): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/checkout/ShippingAddressForm.tsx(254,17): error TS2322: Type 'string | number | Country' is not assignable to type 'string | number | undefined'.
+  Type 'Country' is not assignable to type 'string | number | undefined'.
+src/components/checkout/ShippingAddressForm.tsx(439,65): error TS2345: Argument of type 'string | number | Country' is not assignable to parameter of type 'string | number | undefined'.
+  Type 'Country' is not assignable to type 'string | number | undefined'.
+src/components/checkout/ShippingMethodSelector.tsx(48,28): error TS2345: Argument of type 'ShippingMethod[]' is not assignable to parameter of type 'SetStateAction<ShippingMethod[]>'.
+  Type 'import("C:/projects/cosmatic_app_directus/src/types/collections").ShippingMethod[]' is not assignable to type 'import("C:/projects/cosmatic_app_directus/src/types/index").ShippingMethod[]'.
+    Type 'import("C:/projects/cosmatic_app_directus/src/types/collections").ShippingMethod' is not assignable to type 'import("C:/projects/cosmatic_app_directus/src/types/index").ShippingMethod'.
+      Types of property 'available_countries' are incompatible.
+        Type 'any[] | ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+          Type 'ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+            Type 'ShippingCountryRelation' is not assignable to type 'string | number | { [key: string]: any; id: string | number; }'.
+              Type 'ShippingCountryRelation' is not assignable to type '{ [key: string]: any; id: string | number; }'.
+                Types of property 'id' are incompatible.
+                  Type 'string | number | undefined' is not assignable to type 'string | number'.
+                    Type 'undefined' is not assignable to type 'string | number'.
+src/components/checkout/ShippingMethodSelector.tsx(57,33): error TS2345: Argument of type 'ShippingMethod' is not assignable to parameter of type 'SetStateAction<ShippingMethod | null>'.
+  Type 'import("C:/projects/cosmatic_app_directus/src/types/collections").ShippingMethod' is not assignable to type 'import("C:/projects/cosmatic_app_directus/src/types/index").ShippingMethod'.
+    Types of property 'available_countries' are incompatible.
+      Type 'any[] | ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+        Type 'ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+          Type 'ShippingCountryRelation' is not assignable to type 'string | number | { [key: string]: any; id: string | number; }'.
+            Type 'ShippingCountryRelation' is not assignable to type '{ [key: string]: any; id: string | number; }'.
+              Types of property 'id' are incompatible.
+                Type 'string | number | undefined' is not assignable to type 'string | number'.
+                  Type 'undefined' is not assignable to type 'string | number'.
+src/components/checkout/ShippingMethodSelector.tsx(59,30): error TS2345: Argument of type 'import("C:/projects/cosmatic_app_directus/src/types/collections").ShippingMethod' is not assignable to parameter of type 'import("C:/projects/cosmatic_app_directus/src/types/index").ShippingMethod'.
+  Types of property 'available_countries' are incompatible.
+    Type 'any[] | ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+      Type 'ShippingCountryRelation[]' is not assignable to type '(string | number | { [key: string]: any; id: string | number; })[]'.
+        Type 'ShippingCountryRelation' is not assignable to type 'string | number | { [key: string]: any; id: string | number; }'.
+          Type 'ShippingCountryRelation' is not assignable to type '{ [key: string]: any; id: string | number; }'.
+            Types of property 'id' are incompatible.
+              Type 'string | number | undefined' is not assignable to type 'string | number'.
+                Type 'undefined' is not assignable to type 'string | number'.
+src/components/checkout/ShippingMethodSelector.tsx(142,111): error TS2353: Object literal may only specify known properties, and 'defaultValue' does not exist in type 'Formats'.
+src/components/checkout/ShippingMethodSelector.tsx(168,66): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Locale | undefined'.
+src/components/layout/MobileBottomNav.tsx(73,34): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(79,40): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(86,38): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(92,34): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(99,60): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(99,92): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(204,56): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/MobileBottomNav.tsx(209,62): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/Navigation.tsx(122,52): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/Navigation.tsx(141,66): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/Navigation.tsx(149,54): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/layout/Navigation.tsx(172,60): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Record<string, string | number | Date>'.
+src/components/product/ProductCard.tsx(217,73): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/components/ui/toaster.tsx(11,26): error TS2307: Cannot find module '@/hooks/use-toast' or its corresponding type declarations.
+src/components/ui/toaster.tsx(18,37): error TS7031: Binding element 'id' implicitly has an 'any' type.
+src/components/ui/toaster.tsx(18,41): error TS7031: Binding element 'title' implicitly has an 'any' type.
+src/components/ui/toaster.tsx(18,48): error TS7031: Binding element 'description' implicitly has an 'any' type.
+src/components/ui/toaster.tsx(18,61): error TS7031: Binding element 'action' implicitly has an 'any' type.
+src/lib/api/brands.ts(15,23): error TS2345: Argument of type '"brands"' is not assignable to parameter of type 'never'.
+src/lib/api/brands.ts(53,23): error TS2345: Argument of type '"brands"' is not assignable to parameter of type 'never'.
+src/lib/api/categories.ts(13,23): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/lib/api/categories.ts(46,23): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/lib/api/customers.ts(207,27): error TS2339: Property 'response' does not exist on type 'Error'.
+src/lib/api/directus-config.ts(96,9): error TS2353: Object literal may only specify known properties, and 'fetch' does not exist in type 'Partial<RestConfig>'.
+src/lib/api/directus-config.ts(97,19): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/lib/api/directus-legacy.ts(47,21): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(47,39): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(66,41): error TS18046: 'publicError' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(67,45): error TS18046: 'publicError' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(68,42): error TS18046: 'publicError' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(79,33): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(80,37): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(81,31): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(113,21): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus-legacy.ts(113,39): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus.ts(32,43): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/lib/api/directus.ts(32,48): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/lib/api/directus.ts(41,63): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/directus.ts(48,17): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus.ts(48,35): error TS18046: 'error' is of type 'unknown'.
+src/lib/api/directus.ts(56,25): error TS2353: Object literal may only specify known properties, and 'params' does not exist in type 'Partial<RestConfig>'.
+src/lib/api/directus.ts(59,35): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/lib/api/directus.ts(64,79): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/directus.ts(77,79): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/directus.ts(107,23): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/directus.ts(248,77): error TS2353: Object literal may only specify known properties, and 'token' does not exist in type '{ width?: number | undefined; height?: number | undefined; quality?: number | undefined; format?: "jpg" | "png" | "webp" | "avif" | undefined; fit?: "cover" | "contain" | "inside" | "outside" | undefined; }'.
+src/lib/api/directus.ts(256,29): error TS2353: Object literal may only specify known properties, and 'is_primary' does not exist in type '{ id: string; url: string; }'.
+src/lib/api/directus.ts(273,17): error TS2353: Object literal may only specify known properties, and 'is_primary' does not exist in type '{ id: string; url: string; }'.
+src/lib/api/directus.ts(287,21): error TS2353: Object literal may only specify known properties, and 'is_primary' does not exist in type '{ id: string; url: string; }'.
+src/lib/api/directus.ts(421,23): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/directus.ts(448,48): error TS7006: Parameter 'product' implicitly has an 'any' type.
+src/lib/api/gallery-utils.ts(97,18): error TS18047: 'fileId' is possibly 'null'.
+src/lib/api/gallery-utils.ts(108,18): error TS18047: 'fileId' is possibly 'null'.
+src/lib/api/gallery-utils.ts(193,18): error TS18047: 'fileId' is possibly 'null'.
+src/lib/api/products.ts(12,56): error TS2345: Argument of type '"product_reviews"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(40,56): error TS2345: Argument of type '"product_reviews"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(188,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(272,59): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(297,61): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(347,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(436,55): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(452,55): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(501,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(591,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/products.ts(668,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/search.ts(28,57): error TS2345: Argument of type '"products"' is not assignable to parameter of type 'never'.
+src/lib/api/search.ts(70,59): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/lib/api/search.ts(105,59): error TS2345: Argument of type '"categiries"' is not assignable to parameter of type 'never'.
+src/lib/api/shipping.ts(45,23): error TS2345: Argument of type '"shipping"' is not assignable to parameter of type 'never'.
+src/lib/api/shipping.ts(71,64): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/lib/api/shipping.ts(229,23): error TS2345: Argument of type '"shipping"' is not assignable to parameter of type 'never'.
+src/lib/utils.ts(202,27): error TS2339: Property 'toString' does not exist on type 'never'.
+src/store/auth.ts(397,29): error TS2322: Type '{ first_name: any; last_name: any; id?: string | undefined; email?: string | undefined; phone?: string; avatar?: string; email_verified?: boolean; created_at?: string | undefined; }' is not assignable to type 'AuthUser'.
+  Types of property 'id' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/store/auth.ts(410,94): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+src/store/auth.ts(539,17): error TS2322: Type '(key: string) => string | null' is not assignable to type '(name: string) => StorageValue<any> | Promise<StorageValue<any> | null> | null'.
+  Type 'string | null' is not assignable to type 'StorageValue<any> | Promise<StorageValue<any> | null> | null'.
+    Type 'string' is not assignable to type 'StorageValue<any> | Promise<StorageValue<any> | null> | null'.

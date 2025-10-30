@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cosmatic-app
+    ports:
+      - "3000:3000"
+    networks:
+      - buyjan-network
+    environment:
+      # Directus Configuration - Use container hostname for internal communication
+      NEXT_PUBLIC_DIRECTUS_URL: ${NEXT_PUBLIC_DIRECTUS_URL:-http://directus:8055}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://buyjan.com}
+      DIRECTUS_API_TOKEN: ${DIRECTUS_API_TOKEN}
+      NEXT_PUBLIC_DIRECTUS_API_TOKEN: ${NEXT_PUBLIC_DIRECTUS_API_TOKEN}
+
+      # Environment
+      NODE_ENV: ${NODE_ENV:-production}
+
+      # Optional Analytics
+      NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID}
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Directus CMS Service (if running in same docker-compose)
+  # If you already have Directus running separately, you can remove this section
+  directus:
+    image: directus:latest
+    container_name: directus
+    ports:
+      - "8055:8055"
+    networks:
+      - buyjan-network
+    environment:
+      KEY: ${DIRECTUS_KEY:-generate-a-random-key}
+      SECRET: ${DIRECTUS_SECRET:-generate-a-random-secret}
+      DB_CLIENT: ${DB_CLIENT:-postgres}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_DATABASE:-directus}
+      DB_USER: ${DB_USER:-directus}
+      DB_PASSWORD: ${DB_PASSWORD:-directus_password}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8055/admin" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    networks:
+      - buyjan-network
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-directus}
+      POSTGRES_USER: ${DB_USER:-directus}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-directus_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-directus}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  buyjan-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

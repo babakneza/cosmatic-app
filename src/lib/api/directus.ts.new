@@ -1,0 +1,75 @@
+import { createDirectus, rest, readItems, readItem, staticToken } from '@directus/sdk';
+import { createDirectusClient, DirectusSchema, processDirectusImage, extractImageId, getAssetUrl } from './directus-config';
+import { processProductGallery } from './gallery-utils';
+// Import legacy client for backward compatibility
+import { directusClient, directusQuery } from './directus-legacy';
+
+// Export legacy client for backward compatibility
+export { directusClient, directusQuery, processProductGallery };
+
+/**
+ * Directus SDK Client
+ * 
+ * This function creates and returns an authenticated Directus SDK client
+ * compatible with Directus SDK v20.1.0.
+ */
+export async function getDirectusClient() {
+    try {
+        const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
+        const directusToken = process.env.DIRECTUS_API_TOKEN;
+
+        console.log('[Directus] Creating client with URL:', directusUrl);
+        console.log('[Directus] Token available:', Boolean(directusToken));
+
+        // Create the client with proper error handling
+        const client = createDirectusClient({
+            url: directusUrl,
+            token: directusToken,
+            onError: (error) => {
+                console.error('[Directus] API Error:', error);
+                // Log detailed error information for debugging
+                if (error.errors && Array.isArray(error.errors)) {
+                    error.errors.forEach((err, index) => {
+                        console.error(`[Directus] Error ${index + 1}:`, err);
+                    });
+                }
+            }
+        });
+
+        // Verify the client works
+        try {
+            const testResult = await client.request(readItems('products', { limit: 1, fields: ['id'] }));
+            console.log('[Directus] Authentication successful, found', testResult.length, 'products');
+            return client;
+        } catch (error) {
+            console.warn('[Directus] Primary authentication method failed, trying fallback method');
+
+            // Try fallback with access_token parameter
+            try {
+                const fallbackClient = createDirectus<DirectusSchema>(directusUrl)
+                    .with(rest({
+                        params: {
+                            access_token: directusToken
+                        },
+                        onError: (error) => {
+                            console.error('[Directus] Fallback API Error:', error);
+                        }
+                    }));
+
+                const fallbackResult = await fallbackClient.request(readItems('products', { limit: 1, fields: ['id'] }));
+                console.log('[Directus] Fallback authentication successful, found', fallbackResult.length, 'products');
+                return fallbackClient;
+            } catch (fallbackError) {
+                console.error('[Directus] All authentication methods failed');
+                console.error('[Directus] Last error:', fallbackError);
+
+                // Fall back to unauthenticated client as last resort
+                console.log('[Directus] Falling back to unauthenticated client');
+                return createDirectus<DirectusSchema>(directusUrl).with(rest());
+            }
+        }
+    } catch (error) {
+        console.error('[Directus] Error creating client:', error);
+        throw error;
+    }
+}

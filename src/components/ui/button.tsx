@@ -1,0 +1,99 @@
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn, isRTL } from "@/lib/utils"
+import { useParams } from "next/navigation"
+import { Locale } from "@/types"
+
+const buttonVariants = cva(
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    {
+        variants: {
+            variant: {
+                default: "bg-primary text-primary-foreground hover:bg-primary/90",
+                destructive:
+                    "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+                outline:
+                    "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                secondary:
+                    "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                ghost: "hover:bg-accent hover:text-accent-foreground",
+                link: "text-primary underline-offset-4 hover:underline",
+                accent: "bg-accent text-white hover:bg-accent/90",
+                gold: "bg-background-gold text-neutral-900 hover:bg-background-gold/90",
+            },
+            size: {
+                default: "h-10 px-4 py-2",
+                sm: "h-9 rounded-md px-3",
+                lg: "h-11 rounded-md px-8",
+                xl: "h-12 rounded-md px-10 text-base",
+                icon: "h-10 w-10",
+            },
+            iconPosition: {
+                start: "flex-row",
+                end: "flex-row-reverse",
+            },
+        },
+        defaultVariants: {
+            variant: "default",
+            size: "default",
+            iconPosition: "start",
+        },
+    }
+)
+
+export interface ButtonProps
+    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+    asChild?: boolean
+    icon?: React.ReactNode
+    iconPosition?: "start" | "end"
+    rtlFlip?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+    ({
+        className,
+        variant,
+        size,
+        asChild = false,
+        icon,
+        iconPosition = "start",
+        rtlFlip = true,
+        children,
+        ...props
+    }, ref) => {
+        const params = useParams();
+        const locale = params?.locale as Locale;
+        const rtl = isRTL(locale);
+
+        // Determine icon position based on RTL and rtlFlip prop
+        let effectiveIconPosition = iconPosition;
+        if (rtl && rtlFlip) {
+            effectiveIconPosition = iconPosition === "start" ? "end" : "start";
+        }
+
+        const Comp = asChild ? Slot : "button"
+
+        return (
+            <Comp
+                className={cn(buttonVariants({ variant, size, iconPosition: effectiveIconPosition, className }))}
+                ref={ref}
+                dir={rtl ? "rtl" : "ltr"}
+                {...props}
+            >
+                {icon && effectiveIconPosition === "start" && (
+                    <span className={cn("mr-2", rtl && "ml-2 mr-0")}>{icon}</span>
+                )}
+                {children}
+                {icon && effectiveIconPosition === "end" && (
+                    <span className={cn("ml-2", rtl && "mr-2 ml-0")}>{icon}</span>
+                )}
+            </Comp>
+        )
+    }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
