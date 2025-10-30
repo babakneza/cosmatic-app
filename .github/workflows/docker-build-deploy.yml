@@ -1,5 +1,3 @@
-# محتوای جدید را در فایل موجود بریزید
-@"
 name: Build Docker Image
 
 on:
@@ -28,4 +26,3 @@ jobs:
         name: docker-image
         path: nextjs-image.tar
         retention-days: 30
-"@ | Out-File -FilePath ".github/workflows/docker-build-deploy.yml" -Encoding utf8
