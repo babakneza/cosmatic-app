@@ -2,14 +2,17 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# ابتدا package.json را کپی کنید
 COPY package*.json ./
 RUN npm install
 
+# سپس ALL فایل‌ها را کپی کنید (شامل src/)
 COPY . .
 
-# غیرفعال کردن Turbopack و استفاده از builder قدیمی
+# ساختار فایل‌ها را بررسی کنید (برای دیباگ)
+RUN ls -la && ls -la src/
+
 ENV NODE_OPTIONS="--max-old-space-size=512"
-ENV TURBOPACK=false
 RUN npm run build
 
 EXPOSE 3000

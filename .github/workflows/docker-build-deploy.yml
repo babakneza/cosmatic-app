@@ -1,4 +1,7 @@
-name: Build and Export Docker Image
+# محتوای جدید را در فایل موجود بریزید
+@"
+name: Build Docker Image
+
 on:
   push:
     branches: [ main ]
@@ -6,14 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
     
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Build Docker image
       run: |
         docker build -t nextjs-app .
         
-    - name: Save Docker image to file
+    - name: Save Docker image
       run: |
         docker save nextjs-app -o nextjs-image.tar
         
@@ -23,3 +28,4 @@ jobs:
         name: docker-image
         path: nextjs-image.tar
         retention-days: 30
+"@ | Out-File -FilePath ".github/workflows/docker-build-deploy.yml" -Encoding utf8
