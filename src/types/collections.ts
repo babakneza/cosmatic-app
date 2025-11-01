@@ -108,11 +108,19 @@ export interface ProductReview {
     id: string;
     status: ReviewStatus;
     product: string; // Many-to-One → products
-    customer: string; // Many-to-One → customers
+    customer: string | {
+        id: string;
+        user?: {
+            id: string;
+            first_name?: string;
+            last_name?: string;
+            email?: string;
+        };
+    }; // Many-to-One → customers
     rating: number; // 1-5
     title?: string;
     comment?: string;
-    is_helpful?: Record<string, boolean>; // JSON { helpful: true/false count }
+    is_helpful?: Record<string, any>; // JSON { customers: [], count: number }
     verified_purchase?: boolean;
     created_at?: string;
     updated_at?: string;
@@ -125,7 +133,7 @@ export interface ProductReview {
 export interface WishlistItem {
     id: string;
     customer: string; // Many-to-One → customers
-    product: string; // Many-to-One → products
+    product: string | any; // Many-to-One → products (can be string ID or expanded object)
     date_added?: string; // Timestamp
     created_at?: string;
 }

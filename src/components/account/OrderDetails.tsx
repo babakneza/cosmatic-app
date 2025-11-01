@@ -28,7 +28,6 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 const result = await getOrder(orderId, accessToken);
                 setOrder(result);
             } catch (err: any) {
-                console.error('Failed to fetch order:', err);
                 setError(err.message || 'Failed to load order details');
             } finally {
                 setLoading(false);
@@ -115,41 +114,41 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
     const statusColor = getStatusBadgeColor(order.status);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
             {/* Order Header with Action Buttons */}
-            <div className="bg-gradient-to-r from-gold/5 to-amber-50 rounded-lg border border-gold/20 p-6">
-                <div className="flex items-start justify-between mb-6">
+            <div className="bg-gradient-to-r from-gold/5 to-amber-50 rounded-lg border border-gold/20 p-4 md:p-6">
+                <div className="flex flex-col gap-4 mb-4 md:mb-6">
                     <div>
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className={`${statusColor.bg} ${statusColor.text} px-3 py-1 rounded-full text-sm font-semibold capitalize`}>
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <div className={`${statusColor.bg} ${statusColor.text} px-3 py-1 rounded-full text-xs md:text-sm font-semibold capitalize`}>
                                 {order.status}
                             </div>
                             {order.payment_status === 'completed' && (
-                                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs md:text-sm font-semibold">
                                     ✓ Paid
                                 </div>
                             )}
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900 mb-1">
+                        <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-1 break-words">
                             Order #{order.order_number}
                         </h2>
-                        <p className="text-gray-600">
+                        <p className="text-xs md:text-sm text-gray-600">
                             Placed on {new Date(order.created_at || '').toLocaleDateString()} at {new Date(order.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-sm text-gray-600 mb-2">Total Amount</p>
-                        <p className="text-4xl font-bold text-gold mb-4">
+                    <div className="md:text-right">
+                        <p className="text-xs text-gray-600 mb-1">Total Amount</p>
+                        <p className="text-2xl md:text-4xl font-bold text-gold mb-3 md:mb-4">
                             {formatOMR(order.total, locale as 'ar' | 'en')}
                         </p>
-                        <div className="flex gap-2 justify-end">
-                            <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 font-medium text-sm">
+                        <div className="flex flex-col sm:flex-row gap-2 md:justify-end">
+                            <button className="px-3 md:px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2 font-medium text-sm flex-1 sm:flex-none">
                                 <Download className="w-4 h-4" />
-                                Invoice
+                                <span className="hidden sm:inline">Invoice</span>
                             </button>
-                            <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 font-medium text-sm">
+                            <button className="px-3 md:px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2 font-medium text-sm flex-1 sm:flex-none">
                                 <RotateCcw className="w-4 h-4" />
-                                Reorder
+                                <span className="hidden sm:inline">Reorder</span>
                             </button>
                         </div>
                     </div>
@@ -157,21 +156,21 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             </div>
 
             {/* Status Timeline */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                <h3 className="font-bold text-gray-900 mb-8 flex items-center gap-2">
-                    <Package className="w-5 h-5 text-gold" />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-8">
+                <h3 className="font-bold text-gray-900 mb-4 md:mb-8 flex items-center gap-2 text-base md:text-lg">
+                    <Package className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                     Order Status Timeline
                 </h3>
                 <div className="relative">
                     {/* Timeline Line */}
-                    <div className="absolute left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-gold to-gray-200"></div>
+                    <div className="absolute left-2.5 md:left-5 top-10 bottom-0 w-0.5 bg-gradient-to-b from-gold to-gray-200"></div>
 
                     {/* Timeline Items */}
-                    <div className="space-y-8">
+                    <div className="space-y-6 md:space-y-8">
                         {timeline.map((item, idx) => (
                             <div key={item.status} className="relative">
                                 {/* Dot */}
-                                <div className={`absolute left-0 top-1 w-11 h-11 rounded-full flex items-center justify-center border-4 ${item.active
+                                <div className={`absolute left-0 top-1 w-8 md:w-11 h-8 md:h-11 rounded-full flex items-center justify-center border-4 text-sm md:text-base ${item.active
                                     ? item.current
                                         ? 'bg-gold border-gold text-white'
                                         : 'bg-green-500 border-green-500 text-white'
@@ -182,11 +181,11 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                                 </div>
 
                                 {/* Content */}
-                                <div className="ml-20">
-                                    <h4 className={`font-bold mb-1 ${item.active ? 'text-gray-900' : 'text-gray-500'}`}>
+                                <div className="ml-12 md:ml-20">
+                                    <h4 className={`font-bold text-sm md:text-base mb-1 ${item.active ? 'text-gray-900' : 'text-gray-500'}`}>
                                         {item.label}
                                     </h4>
-                                    <p className={`text-sm ${item.active ? 'text-gray-600' : 'text-gray-400'}`}>
+                                    <p className={`text-xs md:text-sm ${item.active ? 'text-gray-600' : 'text-gray-400'}`}>
                                         {item.description}
                                     </p>
                                     {item.current && item.status !== 'delivered' && (
@@ -202,16 +201,16 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             </div>
 
             {/* Order Items */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <Package className="w-5 h-5 text-gold" />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                    <Package className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                     Order Items ({order.items?.length || 0})
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-1 md:space-y-2">
                     {order.items && order.items.length > 0 ? (
                         <>
                             {/* Header */}
-                            <div className="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-gray-200 px-4 text-sm font-semibold text-gray-600">
+                            <div className="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-gray-200 px-2 md:px-4 text-xs md:text-sm font-semibold text-gray-600">
                                 <div className="col-span-6">Product</div>
                                 <div className="col-span-2 text-center">Qty</div>
                                 <div className="col-span-2 text-right">Price</div>
@@ -220,84 +219,84 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
 
                             {/* Items */}
                             {order.items.map((item, index) => (
-                                <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 py-4 border-b border-gray-100 last:border-0 px-4 hover:bg-gray-50 rounded transition">
+                                <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-3 py-3 md:py-4 border-b border-gray-100 last:border-0 px-2 md:px-4 hover:bg-gray-50 rounded transition text-sm">
                                     <div className="md:col-span-6 flex flex-col justify-center">
-                                        <p className="font-semibold text-gray-900 text-sm md:text-base">{item.product_name}</p>
+                                        <p className="font-semibold text-gray-900 text-xs md:text-base break-words">{item.product_name}</p>
                                         {item.variation_name && (
-                                            <p className="text-xs md:text-sm text-gray-600 mt-1">Variant: {item.variation_name}</p>
+                                            <p className="text-xs text-gray-600 mt-1">Variant: {item.variation_name}</p>
                                         )}
                                     </div>
-                                    <div className="md:col-span-2 flex items-center justify-between md:justify-center">
-                                        <span className="text-gray-600 text-sm md:hidden">Qty:</span>
+                                    <div className="md:col-span-2 flex items-center justify-between md:justify-center text-xs md:text-base">
+                                        <span className="text-gray-600 md:hidden font-medium">Qty:</span>
                                         <span className="font-medium text-gray-900">×{item.quantity}</span>
                                     </div>
-                                    <div className="md:col-span-2 flex items-center justify-between md:justify-end">
-                                        <span className="text-gray-600 text-sm md:hidden">Price:</span>
-                                        <span className="text-gray-700 text-sm">{formatOMR(item.unit_price, locale as 'ar' | 'en')}</span>
+                                    <div className="md:col-span-2 flex items-center justify-between md:justify-end text-xs md:text-base">
+                                        <span className="text-gray-600 md:hidden font-medium">Price:</span>
+                                        <span className="text-gray-700">{formatOMR(item.unit_price, locale as 'ar' | 'en')}</span>
                                     </div>
-                                    <div className="md:col-span-2 flex items-center justify-between md:justify-end">
-                                        <span className="text-gray-600 text-sm md:hidden">Total:</span>
+                                    <div className="md:col-span-2 flex items-center justify-between md:justify-end text-xs md:text-base">
+                                        <span className="text-gray-600 md:hidden font-medium">Total:</span>
                                         <span className="font-bold text-gold">{formatOMR(item.line_total, locale as 'ar' | 'en')}</span>
                                     </div>
                                 </div>
                             ))}
                         </>
                     ) : (
-                        <p className="text-gray-600 py-4">No items in this order</p>
+                        <p className="text-gray-600 py-4 text-sm">No items in this order</p>
                     )}
                 </div>
             </div>
 
             {/* Order Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <CreditCard className="w-5 h-5 text-gold" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                    <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                        <CreditCard className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                         Order Summary
                     </h3>
-                    <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
+                    <div className="space-y-2 md:space-y-3 text-sm md:text-base">
+                        <div className="flex justify-between">
                             <p className="text-gray-600">Subtotal</p>
                             <p className="font-semibold text-gray-900">{formatOMR(order.subtotal, locale as 'ar' | 'en')}</p>
                         </div>
                         {order.shipping_cost > 0 && (
-                            <div className="flex justify-between text-sm">
+                            <div className="flex justify-between">
                                 <p className="text-gray-600">Shipping</p>
                                 <p className="font-semibold text-gray-900">{formatOMR(order.shipping_cost, locale as 'ar' | 'en')}</p>
                             </div>
                         )}
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between">
                             <p className="text-gray-600">Tax ({(order.tax_rate * 100).toFixed(1)}%)</p>
                             <p className="font-semibold text-gray-900">{formatOMR(order.tax_amount, locale as 'ar' | 'en')}</p>
                         </div>
                         {order.discount_amount && order.discount_amount > 0 && (
-                            <div className="flex justify-between text-sm text-green-600">
+                            <div className="flex justify-between text-green-600">
                                 <p>Discount</p>
                                 <p className="font-semibold">-{formatOMR(order.discount_amount, locale as 'ar' | 'en')}</p>
                             </div>
                         )}
-                        <div className="border-t pt-3 flex justify-between">
+                        <div className="border-t pt-2 md:pt-3 flex justify-between">
                             <p className="font-bold text-gray-900">Total</p>
-                            <p className="text-xl font-bold text-gold">{formatOMR(order.total, locale as 'ar' | 'en')}</p>
+                            <p className="text-lg md:text-xl font-bold text-gold">{formatOMR(order.total, locale as 'ar' | 'en')}</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Tracking Information */}
                 {order.tracking_number && (
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <Truck className="w-5 h-5 text-gold" />
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                        <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                            <Truck className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                             Tracking Information
                         </h3>
-                        <div className="space-y-4">
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="space-y-3 md:space-y-4">
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
                                 <p className="text-xs text-gray-600 mb-2 uppercase font-semibold">Tracking Number</p>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <p className="font-mono font-bold text-lg text-gray-900">{order.tracking_number}</p>
+                                <div className="flex items-center gap-2 mb-2 md:mb-3 flex-wrap">
+                                    <p className="font-mono font-bold text-base md:text-lg text-gray-900 break-all">{order.tracking_number}</p>
                                     <button
                                         onClick={() => handleCopyTracking(order.tracking_number!)}
-                                        className="p-2 hover:bg-blue-100 rounded transition text-gray-600"
+                                        className="p-1.5 md:p-2 hover:bg-blue-100 rounded transition text-gray-600 flex-shrink-0"
                                         title="Copy tracking number"
                                     >
                                         <Copy className="w-4 h-4" />
@@ -307,7 +306,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                                     <p className="text-xs text-green-600">✓ Copied to clipboard</p>
                                 )}
                             </div>
-                            <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
+                            <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm md:text-base">
                                 Track Your Shipment
                             </button>
                         </div>
@@ -316,15 +315,15 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             </div>
 
             {/* Shipping & Billing Addresses */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {/* Shipping Address */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <Truck className="w-5 h-5 text-gold" />
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                    <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                        <Truck className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                         Shipping Address
                     </h3>
                     {order.shipping_address && (
-                        <div className="space-y-2 text-sm text-gray-700 bg-gray-50 p-4 rounded-lg">
+                        <div className="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-700 bg-gray-50 p-3 md:p-4 rounded-lg">
                             <p className="font-semibold text-gray-900">{order.shipping_address.first_name} {order.shipping_address.last_name}</p>
                             {order.shipping_address.company && (
                                 <p className="text-gray-600">{order.shipping_address.company}</p>
@@ -340,14 +339,14 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 </div>
 
                 {/* Billing Address */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-gold" />
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+                    <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                        <MapPin className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                         Billing Address
                     </h3>
                     {order.billing_address && (
-                        <div className="space-y-3">
-                            <div className="space-y-2 text-sm text-gray-700 bg-gray-50 p-4 rounded-lg">
+                        <div className="space-y-2 md:space-y-3">
+                            <div className="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-700 bg-gray-50 p-3 md:p-4 rounded-lg">
                                 <p className="font-semibold text-gray-900">{order.billing_address.first_name} {order.billing_address.last_name}</p>
                                 {order.billing_address.company && (
                                     <p className="text-gray-600">{order.billing_address.company}</p>
@@ -359,10 +358,10 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                                 <p>{order.billing_address.city}{order.billing_address.state ? ', ' + order.billing_address.state : ''}</p>
                                 <p>{order.billing_address.postal_code} {order.billing_address.country}</p>
                             </div>
-                            <div className="border-t pt-3">
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-2">Payment Method</p>
-                                <p className="font-semibold text-gray-900 capitalize flex items-center gap-2">
-                                    <CreditCard className="w-4 h-4 text-gold" />
+                            <div className="border-t pt-2 md:pt-3">
+                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1 md:mb-2">Payment Method</p>
+                                <p className="font-semibold text-gray-900 capitalize flex items-center gap-2 text-sm">
+                                    <CreditCard className="w-4 h-4 text-gold flex-shrink-0" />
                                     {order.payment_method}
                                 </p>
                             </div>
@@ -372,36 +371,36 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             </div>
 
             {/* Order Notes & Support */}
-            <div className="bg-gradient-to-r from-gold/5 to-amber-50 rounded-lg border border-gold/20 p-6">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-gold" />
+            <div className="bg-gradient-to-r from-gold/5 to-amber-50 rounded-lg border border-gold/20 p-4 md:p-6">
+                <h3 className="font-bold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-base md:text-lg">
+                    <MessageSquare className="w-4 md:w-5 h-4 md:h-5 text-gold" />
                     Need Help?
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
                     If you have any questions about your order or need assistance, don't hesitate to reach out to our customer support team.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <button className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700">
-                        <Mail className="w-5 h-5 text-gold" />
-                        <span>Email Support</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-4">
+                    <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
+                        <Mail className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
+                        <span className="hidden sm:inline">Email Support</span>
                     </button>
-                    <button className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700">
-                        <Phone className="w-5 h-5 text-gold" />
-                        <span>Call Us</span>
+                    <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
+                        <Phone className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
+                        <span className="hidden sm:inline">Call Us</span>
                     </button>
-                    <button className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700">
-                        <MessageSquare className="w-5 h-5 text-gold" />
-                        <span>Live Chat</span>
+                    <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
+                        <MessageSquare className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
+                        <span className="hidden sm:inline">Live Chat</span>
                     </button>
                 </div>
             </div>
 
             {/* Quick Actions */}
             {order.status === 'delivered' && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="font-bold text-gray-900 mb-4">Satisfied with Your Order?</h3>
-                    <p className="text-gray-600 mb-4">Help us improve by sharing your experience with the products you purchased.</p>
-                    <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 md:p-6">
+                    <h3 className="font-bold text-gray-900 mb-3 md:mb-4 text-base md:text-lg">Satisfied with Your Order?</h3>
+                    <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">Help us improve by sharing your experience with the products you purchased.</p>
+                    <button className="px-4 md:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm md:text-base">
                         Leave a Review
                     </button>
                 </div>

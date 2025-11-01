@@ -42,9 +42,6 @@ export async function GET(
         }
 
         const url = new URL(`${directusUrl}/items/orders/${orderId}`);
-        // Request all fields (let Directus filter based on permissions)
-        // Specific field list causes permission errors with some tokens
-        // url.searchParams.append('fields', [...].join(','));
 
         // Fetch order from Directus using admin token
         const response = await fetch(url.toString(), {

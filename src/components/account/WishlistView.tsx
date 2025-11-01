@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getWishlist, removeFromWishlist } from '@/lib/api/wishlist';
-import { getProduct } from '@/lib/api/products';
 import { WishlistItem } from '@/types/collections';
 import { Product } from '@/types';
 import {
@@ -16,15 +14,13 @@ import {
     Copy,
     AlertCircle,
     Package,
-    Sparkles,
     TrendingUp,
 } from 'lucide-react';
 import { formatOMR } from '@/lib/currency';
 import { useCartStore } from '@/store/cart';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface WishlistViewProps {
-    customerId: string;
-    accessToken: string;
     locale: string;
 }
 
@@ -34,9 +30,10 @@ interface WishlistItemWithProduct extends WishlistItem {
 
 type FilterType = 'all' | 'premium' | 'trending';
 
-export default function WishlistView({ customerId, accessToken, locale }: WishlistViewProps) {
+export default function WishlistView({ locale }: WishlistViewProps) {
     const t = useTranslations();
     const { addItem } = useCartStore();
+    const { wishlistItems, wishlistCount, isLoading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
     const [items, setItems] = useState<WishlistItemWithProduct[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -46,41 +43,70 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
     const [filter, setFilter] = useState<FilterType>('all');
 
     useEffect(() => {
-        const fetchWishlist = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const result = await getWishlist(customerId, accessToken, { limit: 100 });
+        console.log('[WishlistView] items state changed:', { itemsCount: items.length, items: items.map(i => ({ id: i.id, hasProduct: !!i.productData })) });
+    }, [items]);
 
-                // Fetch product details for each wishlist item
-                const itemsWithProducts = await Promise.all(
-                    result.items.map(async (item) => {
-                        try {
-                            const product = await getProduct(item.product as string);
-                            return { ...item, productData: product };
-                        } catch (err) {
-                            console.error('Failed to fetch product:', err);
-                            return item;
-                        }
-                    })
-                );
-
-                setItems(itemsWithProducts as WishlistItemWithProduct[]);
-            } catch (err: any) {
-                console.error('Failed to fetch wishlist:', err);
-                setError(err.message || 'Failed to load wishlist');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchWishlist();
-    }, [customerId, accessToken]);
-
-    const handleRemove = async (itemId: string) => {
+    useEffect(() => {
+        console.log('[WishlistView] useEffect triggered. wishlistItems:', wishlistItems.length, 'wishlistLoading:', wishlistLoading);
+        
         try {
-            await removeFromWishlist(itemId, accessToken);
-            setItems(items.filter((item) => item.id !== itemId));
+            setLoading(wishlistLoading);
+            setError(null);
+
+            console.log('[WishlistView] Processing wishlist items:', {
+                totalItems: wishlistItems.length,
+                items: wishlistItems.map(item => ({
+                    id: item.id,
+                    product: item.product,
+                    productType: typeof item.product
+                }))
+            });
+
+            const validItems = wishlistItems.filter(item => {
+                const productId = item.product?.id ?? item.product;
+                if (!productId) {
+                    console.warn('[WishlistView] Skipping wishlist item without product ID:', JSON.stringify(item));
+                    return false;
+                }
+                console.log('[WishlistView] Valid item found with productId:', productId);
+                return true;
+            });
+
+            console.log('[WishlistView] After filtering - valid items:', validItems.length);
+
+            if (validItems.length === 0) {
+                console.warn('[WishlistView] No valid items after filtering. Setting items to empty array.');
+                setItems([]);
+                return;
+            }
+
+            const itemsWithProducts = validItems.map((item) => {
+                const product = typeof item.product === 'object' ? item.product : null;
+                if (product) {
+                    console.log(`[WishlistView] Using expanded product data for ID: ${product.id}`);
+                    return { ...item, productData: product as Product };
+                } else {
+                    console.warn('[WishlistView] Product not expanded in wishlist item:', item);
+                    return item;
+                }
+            });
+
+            console.log('[WishlistView] Setting items with products. Count:', itemsWithProducts.length);
+            setItems(itemsWithProducts as WishlistItemWithProduct[]);
+
+            if (wishlistError) {
+                console.log('[WishlistView] Setting error:', wishlistError);
+                setError(wishlistError);
+            }
+        } catch (err: any) {
+            console.error('Failed to process wishlist items:', err);
+            setError(err.message || 'Failed to load wishlist');
+        }
+    }, [wishlistItems, wishlistLoading, wishlistError]);
+
+    const handleRemove = async (productId: string, itemId: string) => {
+        try {
+            await removeFromWishlist(productId);
         } catch (err: any) {
             console.error('Failed to remove item:', err);
             alert('Failed to remove item from wishlist');
@@ -92,7 +118,8 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
             setLoadingItems((prev) => ({ ...prev, [item.id]: true }));
             try {
                 addItem(item.productData, 1);
-                handleRemove(item.id);
+                const productId = item.product?.id ?? item.product;
+                handleRemove(productId, item.id);
             } finally {
                 setLoadingItems((prev) => ({ ...prev, [item.id]: false }));
             }
@@ -131,11 +158,11 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
     const filteredItems = items.filter((item) => {
         if (filter === 'all') return true;
         if (filter === 'premium' && item.productData?.price) return item.productData.price > 100;
-        if (filter === 'trending') return Math.random() > 0.5; // Placeholder logic
+        if (filter === 'trending') return Math.random() > 0.5;
         return true;
     });
 
-    if (loading) {
+    if (loading || wishlistLoading) {
         return (
             <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -148,19 +175,19 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
         );
     }
 
-    if (error) {
+    if (error || wishlistError) {
         return (
             <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-4">
                 <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
                 <div>
                     <h3 className="font-semibold text-red-900 mb-1">Error Loading Wishlist</h3>
-                    <p className="text-red-700">{error}</p>
+                    <p className="text-red-700">{error || wishlistError}</p>
                 </div>
             </div>
         );
     }
 
-    if (items.length === 0) {
+    if (items.length === 0 && wishlistItems.length === 0) {
         return (
             <div className="text-center py-20 px-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
                 <div className="w-20 h-20 bg-rose-100/50 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -184,12 +211,12 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
     return (
         <div className="space-y-6">
             {/* Wishlist Header Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-blue-600 font-medium mb-1">Total Items</p>
-                            <p className="text-3xl font-bold text-blue-900">{items.length}</p>
+                            <p className="text-3xl font-bold text-blue-900">{wishlistCount}</p>
                         </div>
                         <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center">
                             <Package className="w-6 h-6 text-blue-600" />
@@ -210,20 +237,6 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                         </div>
                     </div>
                 </div>
-
-                <div className="bg-gradient-to-br from-rose-50 to-rose-100 border border-rose-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-rose-600 font-medium mb-1">Avg Price</p>
-                            <p className="text-3xl font-bold text-rose-900">
-                                {formatOMR(totalValue / items.length, locale as any)}
-                            </p>
-                        </div>
-                        <div className="w-12 h-12 bg-rose-200 rounded-full flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 text-rose-600" />
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {/* Filter Buttons */}
@@ -233,15 +246,15 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                         key={f}
                         onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-full font-medium transition ${filter === f
-                            ? 'bg-gold text-white shadow-md'
+                            ? 'bg-primary text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                     >
                         {f === 'all'
-                            ? `All Items (${items.length})`
+                            ? `All Items (${wishlistCount})`
                             : f === 'premium'
                                 ? `Premium (${items.filter((item) => item.productData?.price && item.productData.price > 100).length})`
-                                : `Trending (${Math.floor(items.length / 2)})`}
+                                : `Trending (${Math.floor(wishlistCount / 2)})`}
                     </button>
                 ))}
             </div>
@@ -266,9 +279,15 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                             >
                                 {/* Product Image Container */}
                                 <div className="relative h-56 bg-gray-100 overflow-hidden">
-                                    {product && product.images?.[0]?.url ? (
+                                    {product && (product.images && product.images.length > 0 && product.images[0]?.url) ? (
                                         <img
                                             src={product.images[0].url}
+                                            alt={product.name}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    ) : product?.image ? (
+                                        <img
+                                            src={product.image}
                                             alt={product.name}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                         />
@@ -286,18 +305,13 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
 
                                 {/* Product Info */}
                                 <div className="flex-1 p-4 flex flex-col">
-                                    {product && (
+                                    {product ? (
                                         <>
-                                            <h3 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 hover:line-clamp-none">
+                                            <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-3 line-clamp-2 hover:line-clamp-none">
                                                 {product.name}
                                             </h3>
-                                            {product.description && (
-                                                <p className="text-xs text-gray-600 line-clamp-2 mb-3">
-                                                    {product.description}
-                                                </p>
-                                            )}
                                             <div className="mb-3">
-                                                <p className="text-lg font-bold text-gold">
+                                                <p className="text-lg sm:text-xl font-bold text-gold">
                                                     {formatOMR(product.price, locale as any)}
                                                 </p>
                                                 <p className="text-xs text-gray-500 mt-1">
@@ -305,6 +319,8 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                                                 </p>
                                             </div>
                                         </>
+                                    ) : (
+                                        <div className="bg-gray-100 animate-pulse h-20 rounded mb-3"></div>
                                     )}
 
                                     {/* Action Buttons */}
@@ -312,7 +328,7 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                                         {product && (
                                             <Link
                                                 href={`/${locale}/products/${product.slug}`}
-                                                className="block w-full px-3 py-2 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-white rounded-lg transition font-medium text-sm text-center"
+                                                className="block w-full px-3 py-2 bg-gradient-to-r from-primary via-primary-600 to-primary-700 hover:from-primary-600 hover:via-primary-700 hover:to-primary-800 text-white rounded-lg transition font-medium text-sm text-center"
                                             >
                                                 View Product
                                             </Link>
@@ -333,7 +349,7 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                                                 title="Share this item"
                                                 className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium rounded-lg transition text-sm border border-blue-200"
                                             >
-                                                <Share2 className="w-3 h-3" />
+                                                <Share2 className="w-4 h-4 sm:w-3 sm:h-3" />
                                                 Share
                                             </button>
                                             <button
@@ -344,13 +360,16 @@ export default function WishlistView({ customerId, accessToken, locale }: Wishli
                                                     : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
                                                     }`}
                                             >
-                                                <Copy className="w-3 h-3" />
+                                                <Copy className="w-4 h-4 sm:w-3 sm:h-3" />
                                                 {copiedId === item.id ? 'Copied!' : 'Copy'}
                                             </button>
                                         </div>
 
                                         <button
-                                            onClick={() => handleRemove(item.id)}
+                                            onClick={() => {
+                                                const productId = item.product?.id ?? item.product;
+                                                handleRemove(productId, item.id);
+                                            }}
                                             className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium rounded-lg transition text-sm border border-red-200"
                                         >
                                             <X className="w-4 h-4" />

@@ -27,4 +27,9 @@ These rules must be strictly followed when working on the BuyJan e-commerce appl
 - Do not rely solely on judgment for important changes but present options and seek input
 - Provide clear explanations of the implications of different approaches
 
+## 5. No Auto-Build
+- Do not build the application (`npm run build`) unless explicitly requested
+- Type checking and linting are acceptable, but production builds require permission
+- Always wait for user instruction before running build commands
+
 These rules are mandatory and must be followed for all work on the BuyJan project.

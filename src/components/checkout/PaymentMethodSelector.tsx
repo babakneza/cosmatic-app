@@ -97,11 +97,11 @@ export default function PaymentMethodSelector({
 
     return (
         <div className={isArabic ? 'text-right' : 'text-left'}>
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                 {DEFAULT_PAYMENT_METHODS.filter((m) => m.is_available).map((method) => (
                     <label
                         key={method.id}
-                        className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${selected?.id === method.id
+                        className={`flex items-start md:items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all ${selected?.id === method.id
                                 ? 'border-blue-600 bg-blue-50'
                                 : 'border-gray-200 hover:border-gray-300 bg-white'
                             }`}
@@ -112,17 +112,17 @@ export default function PaymentMethodSelector({
                             value={method.id}
                             checked={selected?.id === method.id}
                             onChange={() => handleSelect(method)}
-                            className="w-4 h-4 text-blue-600"
+                            className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
                         />
 
-                        <div className={`ml-4 flex-1 flex items-center gap-3 ${isArabic ? 'mr-4 ml-0' : ''}`}>
-                            <div className="text-gray-600">{getPaymentIcon(method.type)}</div>
+                        <div className={`ml-3 md:ml-4 flex-1 flex items-start md:items-center gap-2 md:gap-3 ${isArabic ? 'mr-3 md:mr-4 ml-0' : ''}`}>
+                            <div className="text-gray-600 flex-shrink-0">{getPaymentIcon(method.type)}</div>
                             <div>
-                                <p className="font-semibold text-gray-900">
+                                <p className="font-semibold text-gray-900 text-sm md:text-base">
                                     {isArabic ? method.name_ar || method.name : method.name}
                                 </p>
                                 {method.type === 'cash_on_delivery' && (
-                                    <p className="text-xs text-gray-500 mt-1">{t('checkout.cod_description')}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5 md:mt-1">{t('checkout.cod_description')}</p>
                                 )}
                             </div>
                         </div>
@@ -131,12 +131,12 @@ export default function PaymentMethodSelector({
             </div>
 
             {/* Security Notice */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-6">
-                <div className="flex gap-3">
-                    <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+            <div className="bg-blue-50 rounded-lg p-3 md:p-4 border border-blue-200 mb-4 md:mb-6">
+                <div className="flex gap-2 md:gap-3">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                     </svg>
-                    <p className="text-sm text-blue-700">{t('checkout.secure_payment_notice')}</p>
+                    <p className="text-xs md:text-sm text-blue-700">{t('checkout.secure_payment_notice')}</p>
                 </div>
             </div>
 
@@ -144,7 +144,7 @@ export default function PaymentMethodSelector({
             <button
                 onClick={onSubmit}
                 disabled={!selected || isLoading}
-                className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors"
+                className="w-full px-4 md:px-6 py-2.5 md:py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold text-sm md:text-base transition-colors"
             >
                 {isLoading ? t('common.loading') : t('checkout.review_order')}
             </button>

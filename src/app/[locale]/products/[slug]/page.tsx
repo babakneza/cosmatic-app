@@ -7,11 +7,13 @@ import Image from 'next/image';
 import { Heart, ShoppingCart, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductGallery from '@/components/product/ProductGallery';
 import Price from '@/components/ui/Price';
+import ReviewsTab from '@/components/product/ReviewsTab';
 
 import { Product, Locale } from '@/types';
 import { cn, getDirection, isRTL, getFontFamily, getLocalizedValue, getDirectusAssetUrl } from '@/lib/utils';
 import { calculateDiscount, formatDiscount } from '@/lib/currency';
 import { useCartStore } from '@/store/cart';
+import { getProductReviews } from '@/lib/api/reviews';
 
 // Placeholder product data for initial render
 const placeholderProduct: Product = {
@@ -51,6 +53,8 @@ export default function ProductPage() {
     const [quantity, setQuantity] = useState(1);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
+    const [reviewCount, setReviewCount] = useState(0);
+    const [averageRating, setAverageRating] = useState(0);
 
     // Fetch product data from Directus
     useEffect(() => {
@@ -195,6 +199,32 @@ export default function ProductPage() {
             console.log('[Client] All product fields:', Object.keys(product).join(', '));
         }
     }, [product]);
+
+    // Fetch review stats when product is loaded
+    useEffect(() => {
+        const fetchReviewStats = async () => {
+            if (!product?.id) return;
+
+            try {
+                const response = await getProductReviews(product.id, {
+                    status: 'published',
+                    limit: 1000,
+                });
+
+                const reviews = response.data || [];
+                setReviewCount(reviews.length);
+                if (reviews.length > 0) {
+                    const totalRating = reviews.reduce((sum: number, review: any) => sum + (review.rating || 0), 0);
+                    const avgRating = Math.round((totalRating / reviews.length) * 10) / 10;
+                    setAverageRating(avgRating);
+                }
+            } catch (error) {
+                console.error('[ProductPage] Failed to fetch review stats:', error);
+            }
+        };
+
+        fetchReviewStats();
+    }, [product?.id]);
 
     // Handle quantity change
     const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -513,7 +543,7 @@ export default function ProductPage() {
                     </h1>
 
                     {/* Rating section */}
-                    {product.rating !== undefined && (
+                    {averageRating > 0 && (
                         <div className="flex items-center gap-2 mb-4">
                             <div className="flex">
                                 {[1, 2, 3, 4, 5].map((star) => (
@@ -521,7 +551,7 @@ export default function ProductPage() {
                                         key={star}
                                         className={cn(
                                             "h-5 w-5",
-                                            star <= Math.round(product.rating || 0)
+                                            star <= Math.round(averageRating)
                                                 ? "fill-primary text-primary"
                                                 : "fill-neutral-200 text-neutral-200"
                                         )}
@@ -533,11 +563,11 @@ export default function ProductPage() {
                                 ))}
                             </div>
                             <span className="text-sm text-neutral-600">
-                                {product.rating.toFixed(1)}
+                                {averageRating.toFixed(1)}
                             </span>
-                            {product.reviews_count !== undefined && (
+                            {reviewCount > 0 && (
                                 <span className="text-sm text-neutral-500">
-                                    ({product.reviews_count} {t('product.reviews')})
+                                    ({reviewCount} {t('product.reviews')})
                                 </span>
                             )}
                         </div>
@@ -719,40 +749,43 @@ export default function ProductPage() {
             <div id="product-tabs" className="mb-12">
                 {/* Tab Navigation */}
                 <div className="border-b border-neutral-200 mb-6">
-                    <div className="flex overflow-x-auto">
+                    <div className="flex overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
                         <button
                             onClick={() => setActiveTab('description')}
                             className={cn(
-                                "py-3 px-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors",
+                                "py-2 px-2 md:py-3 md:px-4 text-xs md:text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-1 md:flex-none",
                                 activeTab === 'description'
                                     ? "border-primary text-primary"
                                     : "border-transparent text-neutral-600 hover:text-neutral-800"
                             )}
                         >
-                            {t('product.description')}
+                            <span className="hidden sm:inline">{t('product.description')}</span>
+                            <span className="sm:hidden">{t('product.description').substring(0, 5)}</span>
                         </button>
                         <button
                             onClick={() => setActiveTab('details')}
                             className={cn(
-                                "py-3 px-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors",
+                                "py-2 px-2 md:py-3 md:px-4 text-xs md:text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-1 md:flex-none",
                                 activeTab === 'details'
                                     ? "border-primary text-primary"
                                     : "border-transparent text-neutral-600 hover:text-neutral-800"
                             )}
                         >
-                            Additional Information
+                            <span className="hidden sm:inline">Additional Information</span>
+                            <span className="sm:hidden">Details</span>
                         </button>
                         <button
                             onClick={() => setActiveTab('reviews')}
                             className={cn(
-                                "py-3 px-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors",
+                                "py-2 px-2 md:py-3 md:px-4 text-xs md:text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-1 md:flex-none",
                                 activeTab === 'reviews'
                                     ? "border-primary text-primary"
                                     : "border-transparent text-neutral-600 hover:text-neutral-800"
                             )}
                         >
-                            {t('product.reviews')}
-                            {product.reviews_count !== undefined && ` (${product.reviews_count})`}
+                            <span className="hidden sm:inline">{t('product.reviews')}
+                                {reviewCount > 0 ? ` (${reviewCount})` : ` (0)`}</span>
+                            <span className="sm:hidden">Reviews<span className="hidden xs:inline"> ({reviewCount})</span></span>
                         </button>
                     </div>
                 </div>
@@ -816,10 +849,11 @@ export default function ProductPage() {
                     )}
 
                     {activeTab === 'reviews' && (
-                        <div>
-                            {/* This would be populated with product reviews */}
-                            <p className="text-neutral-500">{t('product.no_reviews')}</p>
-                        </div>
+                        <ReviewsTab 
+                            productId={product.id} 
+                            locale={locale}
+                            onReviewCountChange={setReviewCount}
+                        />
                     )}
                 </div>
             </div>

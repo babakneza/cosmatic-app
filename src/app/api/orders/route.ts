@@ -127,6 +127,8 @@ export async function POST(request: NextRequest) {
             console.log('[Orders API] Creating order in Directus with customer:', body.customer);
             console.log('[Orders API] Order number:', orderNumber);
             console.log('[Orders API] Tracking number:', trackingNumber);
+            console.log('[Orders API] Shipping address JSON:', JSON.stringify(body.shipping_address, null, 2));
+            console.log('[Orders API] Billing address JSON:', JSON.stringify(body.billing_address, null, 2));
 
             // Create order in Directus
             const orderResponse = await axios.post(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getProductBySlug } from '@/lib/api/directus';
+import { getProduct } from '@/lib/api/directus';
 import { Locale } from '@/types';
 
 export async function GET(
@@ -8,7 +8,18 @@ export async function GET(
 ) {
     try {
         // In Next.js 15, params is a Promise that needs to be awaited before destructuring
-        const { slug } = await context.params;
+        let slug: string;
+        try {
+            const params = await context.params;
+            slug = params?.slug;
+        } catch (e) {
+            console.error('[API] Error extracting params:', e);
+            return NextResponse.json(
+                { error: 'Failed to extract product ID from URL' },
+                { status: 400 }
+            );
+        }
+
         const searchParams = request.nextUrl.searchParams;
         const locale = (searchParams.get('locale') || 'en') as Locale;
 
@@ -20,16 +31,17 @@ export async function GET(
         });
 
         // Validate slug
-        if (!slug) {
+        if (!slug || slug === 'undefined') {
             console.error('[API] No slug provided');
             return NextResponse.json(
-                { error: 'No product slug provided' },
+                { error: 'No product ID provided' },
                 { status: 400 }
             );
         }
 
-        // Use our new getProductBySlug function from the Directus client
-        const product = await getProductBySlug(slug, locale);
+        // Use the getProduct function which handles both IDs and slugs
+        const result = await getProduct(slug);
+        const product = result?.data || result;
 
         // If product not found
         if (!product) {

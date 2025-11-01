@@ -3,10 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Filter, SlidersHorizontal, ChevronDown, X } from 'lucide-react';
+import { SlidersHorizontal, ChevronDown, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { Product, Category, Brand, Locale, ProductFilters, SortOption } from '@/types';
 import { LuxuryProductGrid } from '@/components/luxury';
+import { InstagramProductCard } from '@/components/product';
+import { useCartStore } from '@/store/cart';
 import { cn, isRTL, getFontFamily, getLocalizedValue } from '@/lib/utils';
 import Pagination from './Pagination';
 import FilterSidebar from './FilterSidebar';
@@ -43,9 +46,22 @@ export default function ShopContent({
     const searchParams = useSearchParams();
     const rtl = isRTL(locale);
     const fontFamily = getFontFamily(locale);
+    const { addItem } = useCartStore();
 
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+    // Handle add to cart
+    const handleAddToCart = useCallback((product: Product) => {
+        addItem(product, 1);
+        // You can add a toast notification here if needed
+    }, [addItem]);
+
+    // Handle add to wishlist (placeholder)
+    const handleAddToWishlist = useCallback((product: Product) => {
+        // Wishlist functionality can be integrated here
+        console.log('Added to wishlist:', product.id);
+    }, []);
 
     // Helper function to convert string or array to array
     const toArray = (value: string | string[] | undefined): string[] => {
@@ -187,22 +203,15 @@ export default function ShopContent({
 
     return (
         <div className="min-h-screen bg-neutral-50">
-            {/* Page Header */}
-            <div className="bg-gradient-to-br from-primary-50 to-background-gold py-8 px-4">
-                <div className="container mx-auto">
-                    <h1 className={cn(
-                        "text-3xl md:text-4xl font-bold text-neutral-800 mb-2",
-                        fontFamily
-                    )}>
-                        {t('shop.premium_cosmetics')}
-                    </h1>
-                    <p className={cn(
-                        "text-neutral-600",
-                        fontFamily
-                    )}>
-                        {t('shop.discover_products')}
-                    </p>
-                </div>
+            {/* Mobile Sort Bar - Sticky under header */}
+            <div className="lg:hidden sticky top-16 z-40 bg-white border-b border-neutral-200 shadow-sm">
+                <SortDropdown
+                    currentSort={sort}
+                    onSortChange={handleSortChange}
+                    locale={locale}
+                    variant="compact"
+                    onFilterClick={() => setIsMobileFilterOpen(true)}
+                />
             </div>
 
             {/* Main Content */}
@@ -219,31 +228,7 @@ export default function ShopContent({
                     </div>
 
                     {/* Product Grid and Controls */}
-                    <div className="flex-1">
-                        {/* Search Bar */}
-                        <div className="mb-6">
-                            <SearchBar
-                                initialQuery={filters.search || ''}
-                                locale={locale}
-                            />
-                        </div>
-
-                        {/* Mobile Filter Button */}
-                        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 lg:hidden">
-                            <button
-                                onClick={() => setIsMobileFilterOpen(true)}
-                                className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-neutral-200 shadow-sm"
-                            >
-                                <Filter size={18} />
-                                <span>{t('shop.filter')}</span>
-                            </button>
-
-                            <SortDropdown
-                                currentSort={sort}
-                                onSortChange={handleSortChange}
-                                locale={locale}
-                            />
-                        </div>
+                    <div className="flex-1 relative">
 
                         {/* Desktop Sort Controls */}
                         <div className="hidden lg:flex items-center justify-between mb-6">
@@ -295,14 +280,29 @@ export default function ShopContent({
                             </div>
                         )}
 
-                        {/* Products */}
+                        {/* Products - Instagram Style Grid */}
                         {products.length > 0 ? (
-                            <LuxuryProductGrid
-                                products={products}
-                                locale={locale}
-                                columns={{ mobile: 2, tablet: 3, desktop: 3 }}
-                                gap="medium"
-                            />
+                            <motion.div
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ staggerChildren: 0.1, delayChildren: 0.1 }}
+                            >
+                                {products.map((product) => (
+                                    <motion.div
+                                        key={product.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <InstagramProductCard
+                                            product={product}
+                                            onAddToCart={handleAddToCart}
+                                            onAddToWishlist={handleAddToWishlist}
+                                        />
+                                    </motion.div>
+                                ))}
+                            </motion.div>
                         ) : (
                             <div className="flex flex-col items-center justify-center py-16 text-center">
                                 <div className="text-5xl text-neutral-300 mb-4">

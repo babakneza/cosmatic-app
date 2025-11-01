@@ -1,0 +1,103 @@
+=== Step 1: Fetching existing orders ===
+Status: 200
+Order ID: 23
+Order Number: ORD-20251031-793FF9
+Shipping Address Type: object
+Shipping Address Value: {"full_name":"Mohammad Akbari","phone":"+96891372715","email":"testme@testme.com","governorate":"muscat","wilayat":"Muscat","street_address":"No 35 - Way 1400 - Bowsher","building":"building","postal_code":"12345"}
+Billing Address Value: {"full_name":"Mohammad Akbari","phone":"+96891372715","email":"testme@testme.com","governorate":"muscat","wilayat":"Muscat","street_address":"No 35 - Way 1400 - Bowsher","building":"building","postal_code":"12345"}
+
+=== Step 2: Creating test order with JSON addresses ===
+Request Payload: {
+  "order_number": "TEST-1761985367437",
+  "customer": 1,
+  "customer_email": "test@buyjan.com",
+  "status": "pending",
+  "payment_status": "pending",
+  "shipping_address": {
+    "first_name": "Mohammad",
+    "last_name": "Akbari",
+    "address_line_1": "No 35 Way 1400",
+    "address_line_2": "Building 5",
+    "city": "Muscat",
+    "state": "muscat",
+    "postal_code": "12345",
+    "phone_number": "+96891372715",
+    "countries": 7,
+    "type": "shipping"
+  },
+  "billing_address": {
+    "first_name": "Mohammad",
+    "last_name": "Akbari",
+    "address_line_1": "No 35 Way 1400",
+    "address_line_2": "Building 5",
+    "city": "Muscat",
+    "state": "muscat",
+    "postal_code": "12345",
+    "phone_number": "+96891372715",
+    "countries": 7,
+    "type": "billing"
+  },
+  "subtotal": 100,
+  "tax_rate": 0,
+  "tax_amount": 0,
+  "shipping_cost": 10,
+  "total": 110,
+  "payment_method": "cash_on_delivery"
+}
+
+Response Status: 200
+Response Body: {
+  "data": {
+    "id": 31,
+    "order_number": "TEST-1761985367437",
+    "customer": 1,
+    "customer_email": "test@buyjan.com",
+    "subtotal": "100.00000",
+    "tax_rate": "0.00000",
+    "tax_amount": "0.00000",
+    "shipping_cost": "10.00000",
+    "discount_amount": null,
+    "total": "110.00000",
+    "payment_status": "pending",
+    "payment_method": "cash_on_delivery",
+    "payment_intent_id": null,
+    "tracking_number": null,
+    "date_created": "2025-11-01T08:22:47.001Z",
+    "status": "pending",
+    "billing_address": {
+      "first_name": "Mohammad",
+      "last_name": "Akbari",
+      "address_line_1": "No 35 Way 1400",
+      "address_line_2": "Building 5",
+      "city": "Muscat",
+      "state": "muscat",
+      "postal_code": "12345",
+      "phone_number": "+96891372715",
+      "countries": 7,
+      "type": "billing"
+    },
+    "shipping_address": {
+      "first_name": "Mohammad",
+      "last_name": "Akbari",
+      "address_line_1": "No 35 Way 1400",
+      "address_line_2": "Building 5",
+      "city": "Muscat",
+      "state": "muscat",
+      "postal_code": "12345",
+      "phone_number": "+96891372715",
+      "countries": 7,
+      "type": "shipping"
+    },
+    "notes": null,
+    "updated_at": null
+  }
+}
+
+=== Order Created ===
+Order ID: 31
+Shipping Address Saved: {"first_name":"Mohammad","last_name":"Akbari","address_line_1":"No 35 Way 1400","address_line_2":"Building 5","city":"Muscat","state":"muscat","postal_code":"12345","phone_number":"+96891372715","countries":7,"type":"shipping"}
+Billing Address Saved: {"first_name":"Mohammad","last_name":"Akbari","address_line_1":"No 35 Way 1400","address_line_2":"Building 5","city":"Muscat","state":"muscat","postal_code":"12345","phone_number":"+96891372715","countries":7,"type":"billing"}
+
+=== Step 3: Verifying saved order ===
+Verified Shipping Address: {"first_name":"Mohammad","last_name":"Akbari","address_line_1":"No 35 Way 1400","address_line_2":"Building 5","city":"Muscat","state":"muscat","postal_code":"12345","phone_number":"+96891372715","countries":7,"type":"shipping"}
+Verified Billing Address: {"first_name":"Mohammad","last_name":"Akbari","address_line_1":"No 35 Way 1400","address_line_2":"Building 5","city":"Muscat","state":"muscat","postal_code":"12345","phone_number":"+96891372715","countries":7,"type":"billing"}

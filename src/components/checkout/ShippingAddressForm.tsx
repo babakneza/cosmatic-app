@@ -403,7 +403,7 @@ export default function ShippingAddressForm({
         <form onSubmit={handleSubmit} className={isArabic ? 'text-right' : 'text-left'}>
             {/* Use Existing Address Option */}
             {savedAddresses.length > 0 && (
-                <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="mb-4 md:mb-6 p-3 md:p-4 border border-gray-200 rounded-lg bg-gray-50">
                     <label className="flex items-center cursor-pointer">
                         <input
                             type="radio"
@@ -486,9 +486,9 @@ export default function ShippingAddressForm({
             )}
 
             {/* New Address Option / Edit Mode */}
-            <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="p-3 md:p-4 border border-gray-200 rounded-lg">
                 {savedAddresses.length > 0 && !isEditingSelected && (
-                    <label className="flex items-center cursor-pointer mb-4">
+                    <label className="flex items-center cursor-pointer mb-3 md:mb-4">
                         <input
                             type="radio"
                             checked={!useExisting}

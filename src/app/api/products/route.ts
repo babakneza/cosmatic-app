@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
             locale
         });
 
-        console.log(`[API] Found ${products.length} products`);
+        console.log(`[API] Found ${products.data.length} products`);
 
         // Return the products
         return NextResponse.json(products);

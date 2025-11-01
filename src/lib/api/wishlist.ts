@@ -1,6 +1,6 @@
 /**
  * Wishlist API
- * Handles customer wishlists
+ * Handles customer wishlists with Directus collection
  */
 
 import axios from 'axios';
@@ -72,7 +72,7 @@ export async function isProductInWishlist(
 ): Promise<boolean> {
     try {
         const response = await axios.get(
-            `/api/wishlist/check?customer=${customerId}&product=${productId}`,
+            `/api/wishlist?customer=${customerId}&product=${productId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -80,7 +80,7 @@ export async function isProductInWishlist(
             }
         );
 
-        return response.data.data?.exists || false;
+        return (response.data.data && response.data.data.length > 0) || false;
     } catch (error: any) {
         console.error('[Wishlist] Failed to check wishlist:', error.message);
         return false;
@@ -97,9 +97,10 @@ export async function getWishlist(
         limit?: number;
         offset?: number;
     }
-): Promise<{ items: (WishlistItem & { product?: Product })[]; total: number }> {
+): Promise<{ items: WishlistItem[]; total: number }> {
     try {
         const params = new URLSearchParams();
+        params.append('customer', customerId);
 
         if (filters?.limit) {
             params.append('limit', String(filters.limit));
@@ -109,7 +110,7 @@ export async function getWishlist(
         }
 
         const response = await axios.get(
-            `/api/customers/${customerId}/wishlist?${params.toString()}`,
+            `/api/wishlist?${params.toString()}`,
             {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -128,7 +129,7 @@ export async function getWishlist(
 }
 
 /**
- * Get wishlist count
+ * Get wishlist count for a customer
  */
 export async function getWishlistCount(
     customerId: string,
@@ -136,7 +137,7 @@ export async function getWishlistCount(
 ): Promise<number> {
     try {
         const response = await axios.get(
-            `/api/customers/${customerId}/wishlist/count`,
+            `/api/wishlist?customer=${customerId}&limit=1`,
             {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -144,10 +145,10 @@ export async function getWishlistCount(
             }
         );
 
-        return response.data.data?.count || 0;
+        return response.data.meta?.total_count || 0;
     } catch (error: any) {
         console.error('[Wishlist] Failed to fetch wishlist count:', error.message);
-        throw error;
+        return 0;
     }
 }
 
@@ -159,46 +160,17 @@ export async function clearWishlist(
     accessToken: string
 ): Promise<void> {
     try {
-        await axios.delete(
-            `/api/customers/${customerId}/wishlist`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            }
+        const wishlistResponse = await getWishlist(customerId, accessToken, { limit: 1000 });
+        
+        await Promise.all(
+            wishlistResponse.items.map(item => 
+                removeFromWishlist(item.id, accessToken)
+            )
         );
 
         console.log('[Wishlist] Cleared wishlist');
     } catch (error: any) {
         console.error('[Wishlist] Failed to clear wishlist:', error.message);
-        throw error;
-    }
-}
-
-/**
- * Move wishlist item to cart
- */
-export async function moveWishlistToCart(
-    wishlistItemId: string,
-    quantity: number,
-    accessToken: string
-): Promise<{ success: boolean }> {
-    try {
-        const response = await axios.post(
-            `/api/wishlist/${wishlistItemId}/to-cart`,
-            { quantity },
-            {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-
-        console.log('[Wishlist] Moved item to cart');
-        return response.data.data;
-    } catch (error: any) {
-        console.error('[Wishlist] Failed to move to cart:', error.message);
         throw error;
     }
 }

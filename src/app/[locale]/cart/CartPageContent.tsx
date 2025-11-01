@@ -37,16 +37,16 @@ export default function CartPageContent({ locale }: CartPageContentProps) {
     };
 
     return (
-        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
+        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 ${isArabic ? 'lg:flex-row-reverse' : ''}`}>
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-2 sm:space-y-3 lg:space-y-4">
                 {items.map((item) => (
                     <CartItem key={item.id} item={item} locale={locale} />
                 ))}
             </div>
 
-            {/* Cart Summary */}
-            <div className="lg:col-span-1">
+            {/* Cart Summary - Sticky on desktop */}
+            <div className="lg:col-span-1 lg:sticky lg:top-20">
                 <CartSummary
                     subtotal={totals.subtotal}
                     shipping={totals.shipping}

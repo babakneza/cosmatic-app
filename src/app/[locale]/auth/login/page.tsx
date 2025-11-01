@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/store/auth';
 import AuthForm from '@/components/auth/AuthForm';
@@ -15,8 +15,9 @@ interface LoginPageProps {
  */
 export default function LoginPage({ params: paramsPromise }: LoginPageProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations();
-    const { login, is_loading, error, is_authenticated } = useAuth();
+    const { login, is_loading, error, is_authenticated, setRedirectUrl } = useAuth();
     const [locale, setLocale] = React.useState('en');
 
     React.useEffect(() => {
@@ -27,12 +28,25 @@ export default function LoginPage({ params: paramsPromise }: LoginPageProps) {
         getParams();
     }, [paramsPromise]);
 
-    // Redirect authenticated users to account page
+    React.useEffect(() => {
+        const redirectUrl = searchParams.get('redirect');
+        if (redirectUrl) {
+            setRedirectUrl(redirectUrl);
+        }
+    }, [searchParams, setRedirectUrl]);
+
+    // Redirect authenticated users to redirect URL or account page
     React.useEffect(() => {
         if (is_authenticated && locale) {
-            router.push(`/${locale}/account`);
+            const { redirectUrl } = useAuth.getState();
+            if (redirectUrl) {
+                router.push(redirectUrl);
+                setRedirectUrl(null);
+            } else {
+                router.push(`/${locale}/account`);
+            }
         }
-    }, [is_authenticated, locale, router]);
+    }, [is_authenticated, locale, router, setRedirectUrl]);
 
     const handleLogin = async (credentials: any) => {
         await login({

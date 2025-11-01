@@ -4,9 +4,10 @@ import { ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import AuthInitializer from '@/components/auth/AuthInitializer';
 
-// Dynamically import the Header and Footer components with ssr enabled
+// Dynamically import layout components with ssr enabled
 const Header = dynamic(() => import('@/components/layout/Header'), { ssr: true });
 const Footer = dynamic(() => import('@/components/layout/Footer'), { ssr: true });
+const MobileBottomNav = dynamic(() => import('@/components/layout/MobileBottomNav'), { ssr: true });
 
 interface LayoutClientWrapperProps {
     children: ReactNode;
@@ -18,7 +19,7 @@ interface LayoutClientWrapperProps {
  * LayoutClientWrapper
  * Wraps the locale layout with client-side functionality
  * - Runs AuthInitializer to validate auth state on app load
- * - Wraps Header and Footer components
+ * - Wraps Header, Footer, and MobileBottomNav components
  */
 export const LayoutClientWrapper = ({
     children,
@@ -37,6 +38,8 @@ export const LayoutClientWrapper = ({
                     {children}
                 </main>
                 <Footer />
+                {/* Mobile bottom navigation */}
+                <MobileBottomNav />
             </div>
         </>
     );

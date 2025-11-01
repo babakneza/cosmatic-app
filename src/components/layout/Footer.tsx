@@ -102,9 +102,9 @@ export default function Footer() {
     return (
         <footer className="bg-gradient-to-b from-neutral-50 via-white to-neutral-50 border-t border-primary/10">
             {/* Main Footer Content */}
-            <div className="container mx-auto px-4 py-16">
+            <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
                 <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8"
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -113,17 +113,17 @@ export default function Footer() {
                     {/* Brand Section */}
                     <motion.div
                         variants={itemVariants}
-                        className={cn('col-span-1 lg:col-span-1', rtl && 'text-right')}
+                        className={cn('col-span-2 md:col-span-1 lg:col-span-1', rtl && 'text-right')}
                     >
-                        <Link href={`/${locale}`} className="inline-block mb-4">
-                            <span className="text-xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                        <Link href={`/${locale}`} className="inline-block mb-2 md:mb-3 lg:mb-4">
+                            <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                                 BuyJan
                             </span>
                         </Link>
-                        <p className="text-sm text-neutral-600 mb-4 leading-relaxed">
+                        <p className="text-xs md:text-sm text-neutral-600 mb-3 md:mb-4 leading-relaxed">
                             {t('footer.brand_description')}
                         </p>
-                        <div className="flex items-center gap-3" dir={direction}>
+                        <div className="flex items-center gap-2 md:gap-3" dir={direction}>
                             {socialLinks.map((social) => {
                                 const Icon = social.icon;
                                 return (
@@ -133,14 +133,14 @@ export default function Footer() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className={cn(
-                                            'p-2 rounded-full hover:bg-primary/10 transition-all duration-300',
+                                            'p-1.5 md:p-2 rounded-full hover:bg-primary/10 transition-all duration-300',
                                             social.color
                                         )}
                                         aria-label={social.label}
                                         whileHover={{ scale: 1.15 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <Icon className="h-5 w-5" />
+                                        <Icon className="h-4 md:h-5 w-4 md:w-5" />
                                     </motion.a>
                                 );
                             })}
@@ -152,15 +152,15 @@ export default function Footer() {
                         variants={itemVariants}
                         className={cn('col-span-1', rtl && 'text-right')}
                     >
-                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wide mb-4">
+                        <h3 className="text-xs md:text-sm font-bold text-neutral-900 uppercase tracking-wide mb-2 md:mb-3">
                             {t('footer.quick_links')}
                         </h3>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1.5 md:space-y-2">
                             {quickLinks.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
+                                        className="text-xs md:text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
                                     >
                                         {link.label}
                                     </Link>
@@ -174,15 +174,15 @@ export default function Footer() {
                         variants={itemVariants}
                         className={cn('col-span-1', rtl && 'text-right')}
                     >
-                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wide mb-4">
+                        <h3 className="text-xs md:text-sm font-bold text-neutral-900 uppercase tracking-wide mb-2 md:mb-3">
                             {t('footer.support')}
                         </h3>
-                        <ul className="space-y-2">
+                        <ul className="space-y-1.5 md:space-y-2">
                             {supportLinks.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
+                                        className="text-xs md:text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
                                     >
                                         {link.label}
                                     </Link>
@@ -194,33 +194,33 @@ export default function Footer() {
                     {/* Contact Info */}
                     <motion.div
                         variants={itemVariants}
-                        className={cn('col-span-1', rtl && 'text-right')}
+                        className={cn('col-span-2 md:col-span-1 lg:col-span-1', rtl && 'text-right')}
                     >
-                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wide mb-4">
+                        <h3 className="text-xs md:text-sm font-bold text-neutral-900 uppercase tracking-wide mb-2 md:mb-3">
                             {t('footer.contact')}
                         </h3>
-                        <ul className="space-y-3">
-                            <li className="flex items-start gap-3" dir={direction}>
-                                <Phone className={cn('h-4 w-4 text-primary mt-1 flex-shrink-0', rtl && 'order-2')} />
+                        <ul className="space-y-1.5 md:space-y-2">
+                            <li className="flex items-start gap-2 md:gap-3" dir={direction}>
+                                <Phone className={cn('h-3 md:h-4 w-3 md:w-4 text-primary mt-0.5 flex-shrink-0', rtl && 'order-2')} />
                                 <a
                                     href="tel:+96824111111"
-                                    className="text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
+                                    className="text-xs md:text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
                                 >
                                     +968 2411 1111
                                 </a>
                             </li>
-                            <li className="flex items-start gap-3" dir={direction}>
-                                <Mail className={cn('h-4 w-4 text-primary mt-1 flex-shrink-0', rtl && 'order-2')} />
+                            <li className="flex items-start gap-2 md:gap-3" dir={direction}>
+                                <Mail className={cn('h-3 md:h-4 w-3 md:w-4 text-primary mt-0.5 flex-shrink-0', rtl && 'order-2')} />
                                 <a
                                     href="mailto:hello@buyjan.com"
-                                    className="text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
+                                    className="text-xs md:text-sm text-neutral-600 hover:text-primary transition-colors duration-300"
                                 >
                                     hello@buyjan.com
                                 </a>
                             </li>
-                            <li className="flex items-start gap-3" dir={direction}>
-                                <MapPin className={cn('h-4 w-4 text-primary mt-1 flex-shrink-0', rtl && 'order-2')} />
-                                <span className="text-sm text-neutral-600">
+                            <li className="flex items-start gap-2 md:gap-3" dir={direction}>
+                                <MapPin className={cn('h-3 md:h-4 w-3 md:w-4 text-primary mt-0.5 flex-shrink-0', rtl && 'order-2')} />
+                                <span className="text-xs md:text-sm text-neutral-600">
                                     {locale === 'ar'
                                         ? 'مسقط، سلطنة عمان'
                                         : 'Muscat, Sultanate of Oman'}
@@ -232,22 +232,22 @@ export default function Footer() {
                     {/* Newsletter */}
                     <motion.div
                         variants={itemVariants}
-                        className={cn('col-span-1 md:col-span-2 lg:col-span-1', rtl && 'text-right')}
+                        className={cn('col-span-2 md:col-span-3 lg:col-span-1', rtl && 'text-right')}
                     >
-                        <h3 className="text-sm font-bold text-neutral-900 uppercase tracking-wide mb-4">
+                        <h3 className="text-xs md:text-sm font-bold text-neutral-900 uppercase tracking-wide mb-2 md:mb-3">
                             {t('footer.newsletter')}
                         </h3>
-                        <p className="text-xs text-neutral-600 mb-3">
+                        <p className="text-xs text-neutral-600 mb-2 md:mb-3">
                             {t('footer.newsletter_description')}
                         </p>
-                        <div className="flex gap-2" dir={direction}>
+                        <div className="flex flex-col md:flex-row gap-2" dir={direction}>
                             <input
                                 type="email"
                                 placeholder={t('footer.email_placeholder')}
-                                className="flex-1 px-3 py-2 text-sm border border-primary/20 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
+                                className="flex-1 px-2 md:px-3 py-1.5 md:py-2 text-xs md:text-sm border border-primary/20 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-300"
                             />
                             <motion.button
-                                className="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-300"
+                                className="px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-primary to-accent text-white text-xs md:text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-300 whitespace-nowrap"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -258,11 +258,11 @@ export default function Footer() {
                 </motion.div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent my-8"></div>
+                <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent my-6 md:my-8"></div>
 
                 {/* Payment Methods & Legal */}
                 <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-center"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
@@ -270,16 +270,16 @@ export default function Footer() {
                 >
                     {/* Payment Methods */}
                     <motion.div variants={itemVariants} className={cn(rtl && 'text-right')}>
-                        <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wide mb-3">
+                        <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wide mb-2 md:mb-3">
                             {t('footer.payment_methods')}
                         </h4>
-                        <div className="flex flex-wrap gap-2" dir={direction}>
+                        <div className="flex flex-wrap gap-1.5 md:gap-2" dir={direction}>
                             {paymentMethods.map((method) => (
                                 <div
                                     key={method.name}
-                                    className="px-3 py-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg border border-primary/20 flex items-center gap-2"
+                                    className="px-2 md:px-3 py-1 md:py-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg border border-primary/20 flex items-center gap-1.5 md:gap-2"
                                 >
-                                    <span className="text-lg">{method.icon}</span>
+                                    <span className="text-base md:text-lg">{method.icon}</span>
                                     <span className="text-xs font-medium text-neutral-700">
                                         {method.name}
                                     </span>
@@ -291,7 +291,7 @@ export default function Footer() {
                     {/* Legal Links */}
                     <motion.div
                         variants={itemVariants}
-                        className={cn('flex flex-wrap gap-4', rtl ? 'justify-end' : 'justify-start')}
+                        className={cn('flex flex-wrap gap-2 md:gap-4', rtl ? 'justify-end' : 'justify-start')}
                     >
                         {legalLinks.map((link) => (
                             <Link
@@ -307,14 +307,14 @@ export default function Footer() {
 
                 {/* Bottom Footer */}
                 <motion.div
-                    className="mt-8 pt-6 border-t border-primary/10"
+                    className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-primary/10"
                     variants={itemVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true }}
                 >
                     <div className={cn(
-                        'flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-neutral-600',
+                        'flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4 text-xs text-neutral-600',
                         rtl && 'md:flex-row-reverse'
                     )}>
                         <p>
@@ -322,7 +322,7 @@ export default function Footer() {
                         </p>
                         <div className="flex items-center gap-1">
                             {t('footer.made_with')}
-                            <Heart className="h-3 w-3 text-red-600 mx-1 inline" />
+                            <Heart className="h-3 w-3 text-red-600 mx-0.5 inline" />
                             {t('footer.for_oman')}
                         </div>
                     </div>

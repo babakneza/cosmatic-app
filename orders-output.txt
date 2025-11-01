@@ -1,0 +1,83 @@
+export async function getCustomerOrders(
+    customerId: string,
+    accessToken: string,
+    filters?: {
+        status?: OrderStatus;
+        limit?: number;
+        offset?: number;
+    }
+): Promise<{ data: Order[]; total: number }> {
+    try {
+        // Validate required parameters
+        if (!customerId) {
+            throw new Error('customerId is required');
+        }
+        if (!accessToken) {
+            throw new Error('accessToken is required');
+        }
+
+        const params = new URLSearchParams();
+
+        if (filters?.status) {
+            params.append('status', filters.status);
+        }
+        if (filters?.limit) {
+            params.append('limit', String(filters.limit));
+        }
+        if (filters?.offset) {
+            params.append('offset', String(filters.offset));
+        }
+
+        const url = `/api/customers/${customerId}/orders?${params.toString()}`;
+        console.log('[Orders] Fetching from URL:', url);
+
+        const response = await axios.get(
+            url,
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        console.log('[Orders] Successfully fetched orders:', response.data.data?.length || 0);
+        return {
+            data: response.data.data || [],
+            total: response.data.meta?.total_count || 0,
+        };
+    } catch (error: any) {
+        // Log detailed error information
+        console.error('[Orders] Failed to fetch customer orders');
+        console.error('[Orders] Error message:', error.message);
+        console.error('[Orders] Error type:', error.constructor.name);
+        console.error('[Orders] Axios status:', error.response?.status);
+        console.error('[Orders] Axios error data:', JSON.stringify(error.response?.data));
+        console.error('[Orders] Full error:', error);
+
+        throw error;
+    }
+}
+
+/**
+ * Update order status
+ */
+export async function updateOrderStatus(
+    orderId: string,
+    status: OrderStatus,
+    accessToken: string
+): Promise<Order> {
+    try {
+        const response = await axios.patch(
+            `/api/orders/${orderId}`,
+            { status },
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        console.log('[Orders] Updated order status to:', status);
+        return response.data.data;
+    } catch (error: any) {

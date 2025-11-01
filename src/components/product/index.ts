@@ -1,5 +1,9 @@
 export { default as ProductCard } from './ProductCard';
+export { default as InstagramProductCard } from './InstagramProductCard';
 export { default as ProductGrid } from './ProductGrid';
 export { default as PriceDisplay } from './PriceDisplay';
 export { default as ProductBadge } from './ProductBadge';
 export { default as ProductRating } from './ProductRating';
+export { default as ReviewForm } from './ReviewForm';
+export { default as ReviewsList } from './ReviewsList';
+export { default as ReviewsTab } from './ReviewsTab';

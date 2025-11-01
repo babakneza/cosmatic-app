@@ -30,6 +30,7 @@ interface AuthStoreActions {
     isTokenExpired: () => boolean;
     setError: (error: any) => void;
     clearError: () => void;
+    setRedirectUrl: (url: string | null) => void;
 }
 
 type AuthStore = AuthState & AuthStoreActions;
@@ -62,6 +63,7 @@ export const useAuth = create<AuthStore>()(
             customer_profile: null,
             token_expires_at: null,
             _hasHydrated: false,
+            redirectUrl: null,
 
             // Login
             login: async (credentials: LoginCredentials) => {
@@ -517,6 +519,11 @@ export const useAuth = create<AuthStore>()(
             // Clear error
             clearError: () => {
                 set({ error: null });
+            },
+
+            // Set redirect URL
+            setRedirectUrl: (url: string | null) => {
+                set({ redirectUrl: url });
             },
         }),
         {

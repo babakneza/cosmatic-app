@@ -13,6 +13,7 @@ import { cn, getDirection, isRTL, getFontFamily, getLocalizedValue } from '@/lib
 import { formatOMR, calculateDiscount, formatDiscount } from '@/lib/currency';
 import { useCartStore } from '@/store/cart';
 import { getDirectusAssetUrl } from '@/lib/utils';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface LuxuryProductCardProps {
     product: Product;
@@ -38,9 +39,11 @@ export function LuxuryProductCard({
 
     const [isHovered, setIsHovered] = useState(false);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
-    const [isFavorite, setIsFavorite] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
+
+    const { isProductWishlisted, toggleWishlist } = useWishlist();
+    const isFavorite = isProductWishlisted(product.id);
 
     // Get localized product name
     const productName = getLocalizedValue(
@@ -251,10 +254,10 @@ export function LuxuryProductCard({
     };
 
     // Handle favorite toggle
-    const handleFavoriteToggle = (e: React.MouseEvent) => {
+    const handleFavoriteToggle = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        setIsFavorite(!isFavorite);
+        await toggleWishlist(product.id);
     };
 
     // Magnetic effect for buttons

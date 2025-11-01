@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
     Home,
-    Grid3x3,
     Heart,
     ShoppingBag,
     User,
     LogOut,
     LogIn,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn, getDirection, isRTL } from '@/lib/utils';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/store/auth';
@@ -21,7 +20,6 @@ import type { Locale } from '@/types';
 
 interface MobileBottomNavProps {
     className?: string;
-    showCategories?: boolean;
 }
 
 /**
@@ -48,7 +46,6 @@ interface MobileBottomNavProps {
  */
 export default function MobileBottomNav({
     className,
-    showCategories = true,
 }: MobileBottomNavProps) {
     const params = useParams();
     const pathname = usePathname();
@@ -59,7 +56,6 @@ export default function MobileBottomNav({
 
     const { items } = useCartStore();
     const { is_authenticated, user } = useAuth();
-    const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
 
     const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -75,16 +71,15 @@ export default function MobileBottomNav({
             id: 'home',
         },
         {
-            icon: Grid3x3,
-            label: t('nav.categories'),
+            icon: ShoppingBag,
+            label: t('nav.shop'),
             href: `/${locale}/shop`,
-            id: 'categories',
-            hasSubmenu: showCategories,
+            id: 'shop',
         },
         {
             icon: Heart,
             label: t('nav.wishlist'),
-            href: `/${locale}/wishlist`,
+            href: `/${locale}/account/wishlist`,
             id: 'wishlist',
         },
         {
@@ -109,6 +104,47 @@ export default function MobileBottomNav({
         const Icon = item.icon;
         const active = isActive(item.href);
 
+        const commonClasses = cn(
+            'w-full relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200',
+            active
+                ? 'text-primary bg-primary/5'
+                : 'text-neutral-600 hover:text-primary hover:bg-neutral-100'
+        );
+
+        const content = (
+            <>
+                <div className="relative">
+                    <Icon className="w-5 h-5" />
+
+                    {/* Badge for cart count */}
+                    {item.badge && (
+                        <motion.div
+                            className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 200 }}
+                        >
+                            {item.badge > 9 ? '9+' : item.badge}
+                        </motion.div>
+                    )}
+                </div>
+
+                {/* Label */}
+                <span className="text-xs font-medium mt-1 text-center truncate">
+                    {item.label}
+                </span>
+
+                {/* Active indicator */}
+                {active && (
+                    <motion.div
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"
+                        layoutId="activeIndicator"
+                        transition={{ type: 'spring', stiffness: 200, damping: 30 }}
+                    />
+                )}
+            </>
+        );
+
         return (
             <motion.div
                 key={item.id}
@@ -119,48 +155,10 @@ export default function MobileBottomNav({
             >
                 <Link
                     href={item.href}
-                    onClick={() => {
-                        if (item.hasSubmenu) {
-                            setCategoryMenuOpen(!categoryMenuOpen);
-                        }
-                    }}
-                    className={cn(
-                        'relative flex flex-col items-center justify-center py-3 px-2 rounded-lg transition-all duration-200',
-                        active
-                            ? 'text-primary bg-primary/5'
-                            : 'text-neutral-600 hover:text-primary hover:bg-neutral-100'
-                    )}
+                    className={commonClasses}
                     aria-current={active ? 'page' : undefined}
                 >
-                    <div className="relative">
-                        <Icon className="w-5 h-5" />
-
-                        {/* Badge for cart count */}
-                        {item.badge && (
-                            <motion.div
-                                className="absolute -top-2 -right-2 bg-accent text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: 'spring', stiffness: 200 }}
-                            >
-                                {item.badge > 9 ? '9+' : item.badge}
-                            </motion.div>
-                        )}
-                    </div>
-
-                    {/* Label */}
-                    <span className="text-xs font-medium mt-1 text-center truncate">
-                        {item.label}
-                    </span>
-
-                    {/* Active indicator */}
-                    {active && (
-                        <motion.div
-                            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"
-                            layoutId="activeIndicator"
-                            transition={{ type: 'spring', stiffness: 200, damping: 30 }}
-                        />
-                    )}
+                    {content}
                 </Link>
             </motion.div>
         );
@@ -183,35 +181,6 @@ export default function MobileBottomNav({
                     {navItems.map((item, index) => renderNavItem(item, index))}
                 </div>
             </motion.nav>
-
-            {/* Category Submenu - Mobile Only */}
-            <AnimatePresence>
-                {categoryMenuOpen && showCategories && (
-                    <motion.div
-                        className="fixed bottom-20 left-0 right-0 bg-white border-t border-neutral-200 shadow-lg md:hidden z-40"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        dir={direction}
-                    >
-                        <div className="container mx-auto px-4 py-4 space-y-2 max-h-64 overflow-y-auto">
-                            <Link
-                                href={`/${locale}/shop`}
-                                className="block px-4 py-2 text-sm font-medium text-neutral-700 hover:text-primary hover:bg-neutral-100 rounded-lg transition-all duration-200"
-                                onClick={() => setCategoryMenuOpen(false)}
-                            >
-                                {t('nav.all_products')}
-                            </Link>
-
-                            {/* Categories would be populated here */}
-                            <p className="px-4 py-2 text-xs text-neutral-500">
-                                {t('nav.loading_categories')}
-                            </p>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Spacer for bottom nav - prevents content from being hidden */}
             <div className="h-20 md:h-0" />

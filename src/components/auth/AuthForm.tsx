@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/store/auth';
 
 interface AuthFormProps {
     type: 'login' | 'register' | 'password-recovery';
@@ -19,6 +20,7 @@ interface AuthFormProps {
 export function AuthForm({ type, locale, onSubmit }: AuthFormProps) {
     const t = useTranslations();
     const router = useRouter();
+    const { redirectUrl, setRedirectUrl } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -117,9 +119,21 @@ export function AuthForm({ type, locale, onSubmit }: AuthFormProps) {
 
             // Redirect based on form type
             if (type === 'login') {
-                router.push(`/${locale}/account`);
+                if (redirectUrl) {
+                    const url = redirectUrl.startsWith('/') ? redirectUrl : `/${redirectUrl}`;
+                    router.push(url);
+                    setRedirectUrl(null);
+                } else {
+                    router.push(`/${locale}/account`);
+                }
             } else if (type === 'register') {
-                router.push(`/${locale}/account`);
+                if (redirectUrl) {
+                    const url = redirectUrl.startsWith('/') ? redirectUrl : `/${redirectUrl}`;
+                    router.push(url);
+                    setRedirectUrl(null);
+                } else {
+                    router.push(`/${locale}/account`);
+                }
             } else if (type === 'password-recovery') {
                 router.push(`/${locale}/auth/recovery-sent`);
             }

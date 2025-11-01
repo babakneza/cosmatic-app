@@ -82,9 +82,9 @@ export default function ShippingMethodSelector({
 
     if (isLoadingMethods) {
         return (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-6 md:py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className={`ml-3 text-gray-700 ${isArabic ? 'mr-3 ml-0' : ''}`}>
+                <span className={`ml-3 text-sm md:text-base text-gray-700 ${isArabic ? 'mr-3 ml-0' : ''}`}>
                     {t('checkout.loading_shipping_methods')}
                 </span>
             </div>
@@ -93,16 +93,16 @@ export default function ShippingMethodSelector({
 
     if (error) {
         return (
-            <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-                <p className="text-red-700">{error}</p>
+            <div className="bg-red-50 rounded-lg p-3 md:p-6 border border-red-200">
+                <p className="text-red-700 text-sm md:text-base">{error}</p>
             </div>
         );
     }
 
     if (methods.length === 0) {
         return (
-            <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
-                <p className="text-yellow-700">{t('checkout.no_shipping_methods_available')}</p>
+            <div className="bg-yellow-50 rounded-lg p-3 md:p-6 border border-yellow-200">
+                <p className="text-yellow-700 text-sm md:text-base">{t('checkout.no_shipping_methods_available')}</p>
             </div>
         );
     }
@@ -110,11 +110,11 @@ export default function ShippingMethodSelector({
     return (
         <div className={isArabic ? 'text-right' : 'text-left'}>
             {/* Shipping methods list */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                 {methods.map((method) => (
                     <label
                         key={method.id}
-                        className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${selected?.id === method.id
+                        className={`flex items-start p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all ${selected?.id === method.id
                             ? 'border-blue-600 bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300 bg-white'
                             }`}
@@ -125,25 +125,25 @@ export default function ShippingMethodSelector({
                             value={method.id}
                             checked={selected?.id === method.id}
                             onChange={() => handleSelect(method)}
-                            className="w-4 h-4 text-blue-600 mt-1"
+                            className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
                         />
 
-                        <div className={`ml-4 flex-1 ${isArabic ? 'mr-4 ml-0' : ''}`}>
-                            <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                    <p className="font-semibold text-gray-900">
+                        <div className={`ml-3 md:ml-4 flex-1 ${isArabic ? 'mr-3 md:mr-4 ml-0' : ''}`}>
+                            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-3">
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-gray-900 text-sm md:text-base">
                                         {isArabic ? method.name_ar || method.name : method.name}
                                     </p>
 
                                     {/* Method type/description */}
-                                    <div className="mt-1 space-y-1">
+                                    <div className="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
                                         {method.type && method.type.trim() && ['standard', 'express', 'overnight'].includes(method.type.toLowerCase()) && (
                                             <p className="text-xs text-gray-500 capitalize">
                                                 {t(`shipping.type_${method.type.toLowerCase()}`, { defaultValue: method.type })} {method.type === 'express' && '⚡' || method.type === 'overnight' && '🚀'}
                                             </p>
                                         )}
                                         {method.description || method.description_ar ? (
-                                            <p className="text-sm text-gray-600">
+                                            <p className="text-xs md:text-sm text-gray-600">
                                                 {isArabic
                                                     ? method.description_ar || method.description
                                                     : method.description}
@@ -163,7 +163,7 @@ export default function ShippingMethodSelector({
                                     </div>
                                 </div>
 
-                                <div className={`ml-4 text-right font-bold text-lg text-blue-600 ${isArabic ? 'ml-0 mr-4 text-left' : ''
+                                <div className={`text-right font-bold text-base md:text-lg text-blue-600 flex-shrink-0 ${isArabic ? 'text-left' : ''
                                     }`}>
                                     {formatOMR(method.cost || 0, locale as any)}
                                 </div>
@@ -177,7 +177,7 @@ export default function ShippingMethodSelector({
             <button
                 onClick={handleContinue}
                 disabled={!selected || isLoading}
-                className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold transition-colors"
+                className="w-full px-4 md:px-6 py-2.5 md:py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-semibold text-sm md:text-base transition-colors"
             >
                 {isLoading ? t('common.loading') : t('checkout.continue')}
             </button>

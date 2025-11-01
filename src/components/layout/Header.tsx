@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ShoppingBag, Search, Menu, X, ShoppingCart } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ShoppingBag, Search, Menu, X, ShoppingCart, Globe, User, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/store/auth';
 import { cn, getDirection, isRTL } from '@/lib/utils';
@@ -18,15 +18,22 @@ import type { Locale } from '@/types';
 export default function Header() {
     const params = useParams();
     const locale = params?.locale as Locale;
+    const pathname = usePathname();
     const t = useTranslations();
     const direction = getDirection(locale);
     const rtl = isRTL(locale);
     const { items } = useCartStore();
-    const { is_authenticated } = useAuth();
+    const { is_authenticated, user, customer_profile } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
+    const [mobileUserMenuOpen, setMobileUserMenuOpen] = useState(false);
 
     const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0);
+
+    const nextLocale: Locale = locale === 'en' ? 'ar' : 'en';
+    const getLocalizedPath = () => {
+        return pathname.replace(`/${locale}`, `/${nextLocale}`);
+    };
 
     const navItems = [
         { label: t('nav.home'), href: `/${locale}` },
@@ -104,14 +111,14 @@ export default function Header() {
 
                         {/* Icons & Switcher */}
                         <motion.div
-                            className="flex items-center gap-6"
+                            className="flex items-center gap-2 sm:gap-4 lg:gap-6"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            {/* Search */}
+                            {/* Search - Hidden on small mobile, visible on tablet+ */}
                             <motion.button
-                                className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
+                                className="hidden sm:flex h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
                                 onClick={() => setSearchOpen(!searchOpen)}
                                 aria-label="Search"
                                 whileHover={{ scale: 1.1 }}
@@ -120,8 +127,8 @@ export default function Header() {
                                 <Search className="h-5 w-5" />
                             </motion.button>
 
-                            {/* Shop Bag */}
-                            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                            {/* Shop Bag - Hidden on mobile */}
+                            <motion.div className="hidden lg:block" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                                 <Link
                                     href={`/${locale}/shop`}
                                     className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
@@ -131,7 +138,7 @@ export default function Header() {
                                 </Link>
                             </motion.div>
 
-                            {/* Cart */}
+                            {/* Cart - Always visible */}
                             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                                 <Link
                                     href={`/${locale}/cart`}
@@ -152,15 +159,84 @@ export default function Header() {
                                 </Link>
                             </motion.div>
 
-                            {/* Separator Line */}
-                            <div className="h-8 w-px bg-neutral-200 mx-2 sm:mx-3"></div>
+                            {/* Separator Line - Hidden on mobile */}
+                            <div className="hidden lg:block h-8 w-px bg-neutral-200 mx-2 sm:mx-3"></div>
 
-                            {/* Language Switcher - Always visible */}
+                            {/* Language Switcher - Desktop only */}
                             <motion.div
+                                className="hidden lg:block"
                                 whileHover={{ scale: 1.05 }}
                             >
                                 <LanguageSwitcher />
                             </motion.div>
+
+                            {/* Language Toggle - Mobile only */}
+                            <motion.div
+                                className="lg:hidden"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Link
+                                    href={getLocalizedPath()}
+                                    className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-primary transition-all duration-300 hover:shadow-md hover:shadow-black/10"
+                                    aria-label={`Switch to ${nextLocale === 'ar' ? 'Arabic' : 'English'}`}
+                                >
+                                    <Globe className="h-5 w-5" />
+                                </Link>
+                            </motion.div>
+
+                            {/* Mobile User Menu */}
+                            <div className="lg:hidden relative">
+                                <motion.button
+                                    onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
+                                    className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10 relative"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    aria-label="User menu"
+                                >
+                                    {is_authenticated ? (
+                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 text-primary font-medium text-sm">
+                                            {(customer_profile?.first_name || user?.first_name)?.[0]?.toUpperCase() || 'U'}
+                                        </div>
+                                    ) : (
+                                        <User className="h-5 w-5" />
+                                    )}
+                                </motion.button>
+
+                                {/* Mobile User Menu Dropdown */}
+                                <AnimatePresence>
+                                    {mobileUserMenuOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                                            transition={{ duration: 0.2 }}
+                                            className={cn(
+                                                'fixed top-16 max-h-96 overflow-y-auto w-56 bg-white rounded-xl shadow-xl border border-neutral-200 z-50',
+                                                rtl ? 'right-4' : 'left-4'
+                                            )}
+                                            dir={direction}
+                                        >
+                                            <AuthMenu
+                                                variant="mobile"
+                                                className="px-0"
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
+                                {/* Overlay to close menu */}
+                                {mobileUserMenuOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        onClick={() => setMobileUserMenuOpen(false)}
+                                        className="fixed inset-0 z-40"
+                                        style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
+                                    />
+                                )}
+                            </div>
 
                             {/* Mobile Menu Button */}
                             <motion.button
@@ -202,9 +278,9 @@ export default function Header() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
                         >
-                            {/* Navigation Items */}
+                            {/* Navigation Items - Only About and Contact */}
                             <nav className="flex flex-col space-y-2 mb-4 pb-4 border-b border-neutral-200">
-                                {navItems.map((item) => (
+                                {navItems.filter(item => item.href.includes('/about') || item.href.includes('/contact')).map((item) => (
                                     <motion.div
                                         key={item.href}
                                         whileHover={{ x: 4 }}
@@ -221,11 +297,8 @@ export default function Header() {
                                 ))}
                             </nav>
 
-                            {/* Auth Menu Items */}
-                            <AuthMenu
-                                variant="mobile"
-                                className="px-0"
-                            />
+                            {/* Sort options slot for shop page - injected by children */}
+                            <div id="mobile-sort-menu"></div>
                         </motion.div>
                     )}
                 </div>

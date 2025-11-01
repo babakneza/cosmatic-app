@@ -11,7 +11,7 @@ import { CheckoutProgress, ShippingAddressForm, ShippingMethodSelector, PaymentM
 import { calculateCartTotals } from '@/lib/currency';
 import { useCheckoutData } from '@/hooks/useCheckoutData';
 import { createOrder } from '@/lib/api/orders';
-import { getCountryName } from '@/lib/api/countries';
+import { getCountryName, COUNTRY_NAMES_BY_ID } from '@/lib/api/countries';
 
 interface CheckoutPageContentProps {
     locale: Locale;
@@ -224,36 +224,48 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
                 line_total: (item.product.sale_price || item.product.price) * item.quantity,
             }));
 
-            // Convert addresses to JSON format
-            const shippingAddressJson = {
-                full_name: shippingAddress.full_name,
-                phone: shippingAddress.phone,
-                email: shippingAddress.email,
-                governorate: shippingAddress.governorate,
-                wilayat: shippingAddress.wilayat,
-                street_address: shippingAddress.street_address,
-                building: shippingAddress.building,
-                floor: shippingAddress.floor,
-                apartment: shippingAddress.apartment,
-                postal_code: shippingAddress.postal_code,
-                additional_info: shippingAddress.additional_info,
+            // Convert checkout Address format to Directus CustomerAddress JSON format
+            const convertToDirectusFormat = (addr: Address, addressType: 'shipping' | 'billing' = 'shipping') => {
+                const fullName = (addr.full_name || '').trim();
+                const nameParts = fullName.split(/\s+/);
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ');
+
+                const json: Record<string, any> = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    address_line_1: addr.street_address || '',
+                    city: addr.wilayat || '',
+                    state: addr.governorate || '',
+                    postal_code: addr.postal_code || '',
+                    type: addressType,
+                };
+
+                if (addr.phone) json.phone_number = addr.phone;
+                if (addr.building) json.address_line_2 = addr.building;
+                if (addr.country_id) {
+                    json.countries = addr.country_id;
+                    // Add country name alongside the ID
+                    const countryData = COUNTRY_NAMES_BY_ID[addr.country_id];
+                    if (countryData) {
+                        json.country_name = countryData.en;
+                        json.country_name_ar = countryData.ar;
+                    }
+                }
+
+                return json;
             };
 
+            const shippingAddressJson = convertToDirectusFormat(shippingAddress, 'shipping');
+            // If billing address is same as shipping, convert again with 'billing' type
             const billingAddressJson = billingAddress
-                ? {
-                    full_name: billingAddress.full_name,
-                    phone: billingAddress.phone,
-                    email: billingAddress.email,
-                    governorate: billingAddress.governorate,
-                    wilayat: billingAddress.wilayat,
-                    street_address: billingAddress.street_address,
-                    building: billingAddress.building,
-                    floor: billingAddress.floor,
-                    apartment: billingAddress.apartment,
-                    postal_code: billingAddress.postal_code,
-                    additional_info: billingAddress.additional_info,
-                }
-                : shippingAddressJson;
+                ? convertToDirectusFormat(billingAddress, 'billing')
+                : convertToDirectusFormat(shippingAddress, 'billing');
+
+            console.log('[Checkout] Converting address from checkout format to Directus format');
+            console.log('[Checkout] Original shipping address:', JSON.stringify(shippingAddress));
+            console.log('[Checkout] Converted shipping address JSON:', JSON.stringify(shippingAddressJson, null, 2));
+            console.log('[Checkout] Converted billing address JSON:', JSON.stringify(billingAddressJson, null, 2));
 
             // Create order in Directus with automatic retry on 401
             let order;
@@ -382,10 +394,10 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
             <CheckoutProgress currentStep={step} locale={locale} onStepClick={handleProgressClick} />
 
             {/* Step Content */}
-            <div className="bg-white rounded-lg p-6 lg:p-8 border border-gray-200 mb-8">
+            <div className="bg-white rounded-lg p-4 md:p-6 lg:p-8 border border-gray-200 mb-6 md:mb-8">
                 {step === 'shipping' && (
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('checkout.step_address')}</h2>
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{t('checkout.step_address')}</h2>
                         <ShippingAddressForm
                             initialAddress={shippingAddress ?? undefined}
                             savedAddresses={addresses}
@@ -403,15 +415,15 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
                 {step === 'shipping_method' && shippingAddress && (
                     <div>
                         {/* Dynamic Title with Location Info */}
-                        <div className={`mb-6 ${isArabic ? 'text-right' : 'text-left'}`}>
-                            <h2 className="text-2xl font-bold text-gray-900">
+                        <div className={`mb-4 md:mb-6 ${isArabic ? 'text-right' : 'text-left'}`}>
+                            <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                                 {t('checkout.shipping_methods_available')}
                                 {shippingAddress.country_name && `, ${shippingAddress.country_name}`}
                                 {!shippingAddress.country_name && shippingAddress.country_id && `, ${getCountryName(shippingAddress.country_id, locale) || shippingAddress.country_id}`}
                             </h2>
-                            <p className="text-sm text-gray-600 mt-2">{t('checkout.select_shipping_option')}</p>
+                            <p className="text-xs md:text-sm text-gray-600 mt-2">{t('checkout.select_shipping_option')}</p>
                         </div>
-                        <div className="space-y-6">
+                        <div className="space-y-4 md:space-y-6">
                             <ShippingMethodSelector
                                 address={shippingAddress}
                                 locale={locale}
@@ -423,11 +435,11 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
                             />
 
                             {/* Back Button */}
-                            <div className={`flex gap-4 pt-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                            <div className={`flex gap-3 md:gap-4 pt-2 md:pt-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
                                 <button
                                     onClick={handleBack}
                                     disabled={isLoading}
-                                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                    className="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg text-sm md:text-base text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
                                 >
                                     {t('checkout.back')}
                                 </button>
@@ -438,8 +450,8 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
 
                 {step === 'payment' && (
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('checkout.step_payment')}</h2>
-                        <div className="space-y-6">
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{t('checkout.step_payment')}</h2>
+                        <div className="space-y-4 md:space-y-6">
                             <PaymentMethodSelector
                                 selectedMethod={paymentMethod || undefined}
                                 onSelect={(method) => {
@@ -460,11 +472,11 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
                             />
 
                             {/* Back Button */}
-                            <div className={`flex gap-4 pt-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
+                            <div className={`flex gap-3 md:gap-4 pt-2 md:pt-4 ${isArabic ? 'flex-row-reverse' : ''}`}>
                                 <button
                                     onClick={handleBack}
                                     disabled={isLoading}
-                                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
+                                    className="px-4 md:px-6 py-2 md:py-3 border border-gray-300 rounded-lg text-sm md:text-base text-gray-700 font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
                                 >
                                     {t('checkout.back')}
                                 </button>
@@ -475,7 +487,7 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
 
                 {step === 'review' && shippingAddress && shippingMethod && paymentMethod && (
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('checkout.step_review')}</h2>
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{t('checkout.step_review')}</h2>
                         <OrderReview
                             items={cartItems}
                             shippingAddress={shippingAddress}

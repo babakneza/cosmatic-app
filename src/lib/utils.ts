@@ -384,3 +384,33 @@ export async function copyToClipboard(text: string): Promise<boolean> {
         return false;
     }
 }
+
+/**
+ * Calculate average rating from reviews array
+ * Filters only published reviews
+ */
+export function calculateAverageRating(reviews: any[] | undefined): {
+    average: number;
+    count: number;
+} {
+    if (!reviews || !Array.isArray(reviews) || reviews.length === 0) {
+        return { average: 0, count: 0 };
+    }
+
+    // Filter published reviews only
+    const publishedReviews = reviews.filter(
+        (review) => review.status === 'published' || review.status === 'approved'
+    );
+
+    if (publishedReviews.length === 0) {
+        return { average: 0, count: 0 };
+    }
+
+    const sum = publishedReviews.reduce((acc, review) => acc + (review.rating || 0), 0);
+    const average = sum / publishedReviews.length;
+
+    return {
+        average: Math.round(average * 10) / 10, // Round to 1 decimal place
+        count: publishedReviews.length,
+    };
+}

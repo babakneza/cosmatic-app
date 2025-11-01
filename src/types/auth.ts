@@ -61,4 +61,5 @@ export interface AuthState {
     customer_profile: any | null;
     token_expires_at: number | null;
     _hasHydrated?: boolean;
+    redirectUrl: string | null;
 }

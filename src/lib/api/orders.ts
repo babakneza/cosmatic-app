@@ -4,7 +4,94 @@
  */
 
 import axios from 'axios';
-import { Order, OrderItem, OrderStatus, OrderFilters } from '@/types/collections';
+import { Order, OrderItem, OrderStatus, OrderFilters, CustomerAddress } from '@/types/collections';
+import { Address } from '@/types';
+import { COUNTRY_NAMES_BY_ID } from '@/lib/api/countries';
+
+/**
+ * Format address as JSON object for Directus
+ * Accepts either CustomerAddress (Directus format) or Address (checkout format)
+ * Returns snapshot matching Directus schema
+ * 
+ * @param address - Address object to format
+ * @param addressType - Type of address ('shipping' or 'billing'). Defaults to 'shipping'
+ */
+export function formatAddressAsJSON(address: Address | CustomerAddress, addressType: 'shipping' | 'billing' = 'shipping'): Record<string, any> {
+    // Check if it's a CustomerAddress from Directus
+    const isCustomerAddress = 'first_name' in address && 'last_name' in address;
+
+    if (isCustomerAddress) {
+        const ca = address as CustomerAddress;
+        const countryId = typeof ca.countries === 'object' && ca.countries !== null && 'id' in ca.countries
+            ? ca.countries.id
+            : ca.countries;
+
+        const json: Record<string, any> = {
+            id: ca.id,
+            first_name: ca.first_name,
+            last_name: ca.last_name,
+            address_line_1: ca.address_line_1,
+            city: ca.city,
+            postal_code: ca.postal_code,
+            type: ca.type || addressType,
+            countries: countryId,
+        };
+
+        // Add country names if country ID is available
+        if (countryId) {
+            const countryData = COUNTRY_NAMES_BY_ID[countryId];
+            if (countryData) {
+                json.country_name = countryData.en;
+                json.country_name_ar = countryData.ar;
+            }
+        }
+
+        if (ca.company) json.company = ca.company;
+        if (ca.address_line_2) json.address_line_2 = ca.address_line_2;
+        if (ca.state) json.state = ca.state;
+        if (ca.phone_number) json.phone_number = ca.phone_number;
+        if (ca.is_default !== undefined) json.is_default = ca.is_default;
+        if (ca.customer) json.customer = ca.customer;
+        if (ca.created_at) json.created_at = ca.created_at;
+        if (ca.updated_at) json.updated_at = ca.updated_at;
+
+        return json;
+    }
+
+    // Address from checkout form - convert to Directus CustomerAddress format
+    const a = address as Address;
+    
+    // Parse full_name into first_name and last_name
+    const fullName = (a.full_name || '').trim();
+    const nameParts = fullName.split(/\s+/);
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    const json: Record<string, any> = {
+        first_name: firstName,
+        last_name: lastName,
+        address_line_1: a.street_address || '',
+        city: a.wilayat || '',
+        state: a.governorate || '',
+        postal_code: a.postal_code || '',
+        type: addressType,
+    };
+
+    // Add optional fields if present
+    if (a.phone) json.phone_number = a.phone;
+    if (a.building) json.address_line_2 = a.building;
+    if (a.country_id) {
+        json.countries = a.country_id;
+        // Add country name alongside the ID
+        const countryData = COUNTRY_NAMES_BY_ID[a.country_id];
+        if (countryData) {
+            json.country_name = countryData.en;
+            json.country_name_ar = countryData.ar;
+        }
+    }
+
+    return json;
+}
 
 /**
  * Create a new order

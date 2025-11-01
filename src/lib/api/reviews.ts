@@ -14,7 +14,7 @@ export async function createReview(
     productId: string,
     accessToken: string,
     reviewData: {
-        rating: number; // 1-5
+        rating: number;
         title?: string;
         comment?: string;
     }
@@ -96,6 +96,7 @@ export async function getCustomerReviews(
 ): Promise<{ data: ProductReview[]; total: number }> {
     try {
         const params = new URLSearchParams();
+        params.append('customer', customerId);
 
         if (filters?.limit) {
             params.append('limit', String(filters.limit));
@@ -105,7 +106,7 @@ export async function getCustomerReviews(
         }
 
         const response = await axios.get(
-            `/api/customers/${customerId}/reviews?${params.toString()}`,
+            `/api/reviews?${params.toString()}`,
             {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -120,6 +121,36 @@ export async function getCustomerReviews(
     } catch (error: any) {
         console.error('[Reviews] Failed to fetch customer reviews:', error.message);
         throw error;
+    }
+}
+
+/**
+ * Get customer's review for a specific product
+ */
+export async function getCustomerReviewForProduct(
+    customerId: string,
+    productId: string,
+    accessToken: string
+): Promise<ProductReview | null> {
+    try {
+        const params = new URLSearchParams();
+        params.append('customer', customerId);
+        params.append('product', productId);
+
+        const response = await axios.get(
+            `/api/reviews?${params.toString()}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        const reviews = response.data.data || [];
+        return reviews.length > 0 ? reviews[0] : null;
+    } catch (error: any) {
+        console.error('[Reviews] Failed to fetch customer review:', error.message);
+        return null;
     }
 }
 
@@ -181,12 +212,13 @@ export async function deleteReview(
 export async function markReviewHelpful(
     reviewId: string,
     accessToken: string,
-    helpful: boolean
+    helpful: boolean,
+    customerId: string
 ): Promise<ProductReview> {
     try {
         const response = await axios.post(
             `/api/reviews/${reviewId}/helpful`,
-            { helpful },
+            { helpful, customerId },
             {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,

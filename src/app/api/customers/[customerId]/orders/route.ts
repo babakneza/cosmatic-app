@@ -26,78 +26,71 @@ export async function GET(
             );
         }
 
-        // Extract token from Bearer scheme
-        const token = authHeader.split(' ')[1];
-        if (!token) {
-            return NextResponse.json(
-                { error: 'Invalid authorization header' },
-                { status: 401 }
-            );
-        }
-
-        // Build Directus query URL
-        const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
-        const adminToken = process.env.DIRECTUS_API_TOKEN;
-
-        if (!adminToken) {
-            console.error('[Orders API] Missing DIRECTUS_API_TOKEN');
-            return NextResponse.json(
-                { error: 'Server misconfiguration' },
-                { status: 500 }
-            );
-        }
+        const token = authHeader.replace('Bearer ', '');
 
         // Build filter query parameter
-        let filterQuery = JSON.stringify({ customer: { _eq: customerId } });
+        let filterQuery = `{"customer":{"_eq":"${customerId}"}}`;
+
         if (status) {
-            filterQuery = JSON.stringify({
-                _and: [
-                    { customer: { _eq: customerId } },
-                    { status: { _eq: status } }
-                ]
-            });
+            filterQuery = `{"_and":[{"customer":{"_eq":"${customerId}"}},{"status":{"_eq":"${status}"}}]}`;
         }
+
+        const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
 
         // Build the URL for Directus API
         const url = new URL(`${directusUrl}/items/orders`);
+        url.searchParams.append('fields', '*');
         url.searchParams.append('filter', filterQuery);
         url.searchParams.append('limit', limit.toString());
         url.searchParams.append('offset', offset.toString());
         url.searchParams.append('sort', '-date_created');
 
-        // Request all fields (let Directus filter based on permissions)
-        // Specific field list causes permission errors with some tokens
-        // url.searchParams.append('fields', [...].join(','));
-
         // Fetch from Directus API using admin token
         const response = await fetch(url.toString(), {
-            method: 'GET',
             headers: {
-                'Authorization': `Bearer ${adminToken}`,
-                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.DIRECTUS_API_TOKEN}`,
             },
         });
 
-        if (response.status === 401) {
-            return NextResponse.json(
-                { error: 'Unauthorized: Invalid or expired token' },
-                { status: 401 }
-            );
-        }
-
         if (!response.ok) {
             const error = await response.json().catch(() => ({ error: 'Failed to fetch orders' }));
-            return NextResponse.json(error, { status: response.status });
+            throw new Error(JSON.stringify(error));
         }
 
         const data = await response.json();
+        const orders = data.data || [];
+        const orderIds = orders.map((o: any) => o.id);
+
+        // Fetch order items for all orders
+        let orderItems: any[] = [];
+        if (orderIds.length > 0) {
+            const itemsUrl = new URL(`${directusUrl}/items/order_items`);
+            itemsUrl.searchParams.append('fields', '*');
+            itemsUrl.searchParams.append('filter', `{"order":{"_in":[${orderIds.map((id: string) => `"${id}"`).join(',')}]}}`);
+            
+            try {
+                const itemsResponse = await fetch(itemsUrl.toString(), {
+                    headers: {
+                        'Authorization': `Bearer ${process.env.DIRECTUS_API_TOKEN}`,
+                    },
+                });
+                
+                if (itemsResponse.ok) {
+                    const itemsData = await itemsResponse.json();
+                    orderItems = itemsData.data || [];
+                }
+            } catch (e) {
+                console.error('[Orders API] Failed to fetch order items:', e);
+            }
+        }
 
         // Transform data to map Directus field names to Order type expectations
-        const transformedOrders = (data.data || []).map((order: any) => ({
+        const transformedOrders = orders.map((order: any) => ({
             ...order,
             // Map Directus system fields to expected field names
-            created_at: order.date_created || order.created_at,
-            updated_at: order.date_updated || order.updated_at,
+            created_at: order.date_created,
+            // Attach order items
+            order_items: orderItems.filter((item: any) => item.order === order.id),
         }));
 
         return NextResponse.json(
@@ -105,15 +98,12 @@ export async function GET(
                 data: transformedOrders,
                 meta: {
                     total_count: data.meta?.total_count || 0,
-                    limit,
-                    offset
-                }
+                },
             },
             { status: 200 }
         );
     } catch (error: any) {
         console.error('[Orders API] Failed to fetch customer orders:', error);
-
         return NextResponse.json(
             { error: 'Failed to fetch orders' },
             { status: 500 }

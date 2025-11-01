@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/store/auth';
 import AuthForm from '@/components/auth/AuthForm';
@@ -15,8 +15,9 @@ interface RegisterPageProps {
  */
 export default function RegisterPage({ params: paramsPromise }: RegisterPageProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const t = useTranslations();
-    const { register, is_loading, error, is_authenticated } = useAuth();
+    const { register, is_loading, error, is_authenticated, setRedirectUrl } = useAuth();
     const [locale, setLocale] = React.useState('en');
 
     React.useEffect(() => {
@@ -27,7 +28,14 @@ export default function RegisterPage({ params: paramsPromise }: RegisterPageProp
         getParams();
     }, [paramsPromise]);
 
-    // Redirect authenticated users to account page
+    React.useEffect(() => {
+        const redirectUrl = searchParams.get('redirect');
+        if (redirectUrl) {
+            setRedirectUrl(redirectUrl);
+        }
+    }, [searchParams, setRedirectUrl]);
+
+    // Redirect authenticated users to account page or redirect URL
     React.useEffect(() => {
         if (is_authenticated && locale) {
             router.push(`/${locale}/account`);
