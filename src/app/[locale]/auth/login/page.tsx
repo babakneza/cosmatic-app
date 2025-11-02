@@ -57,11 +57,11 @@ export default function LoginPage({ params: paramsPromise }: LoginPageProps) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 sm:py-12 px-4">
             <div className="w-full max-w-md">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="text-center mb-4 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                         {t('auth.login')}
                     </h1>
                     <p className="text-gray-600">

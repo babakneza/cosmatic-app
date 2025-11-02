@@ -33,14 +33,14 @@ export default function CartSummary({
     const isArabic = locale === 'ar';
 
     return (
-        <div className="bg-gray-50 rounded-lg p-3 sm:p-6 border border-gray-200">
+        <div className="bg-gray-50 rounded-lg p-2 sm:p-6 border border-gray-200">
             {/* Order Summary Title */}
-            <h3 className={`text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
+            <h3 className={`text-sm sm:text-lg font-bold text-gray-900 mb-2 sm:mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
                 {t('cart.order_summary')}
             </h3>
 
             {/* Summary Lines */}
-            <div className={`space-y-2 sm:space-y-3 mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-200 ${isArabic ? 'text-right' : 'text-left'}`}>
+            <div className={`space-y-1 sm:space-y-3 mb-2 sm:mb-4 pb-2 sm:pb-4 border-b border-gray-200 ${isArabic ? 'text-right' : 'text-left'}`}>
                 {/* Subtotal */}
                 <div className="flex justify-between items-center text-sm sm:text-base">
                     <span className="text-gray-600">{t('cart.subtotal')}</span>
@@ -85,8 +85,8 @@ export default function CartSummary({
             </div>
 
             {/* Total */}
-            <div className="flex justify-between items-center mb-4 sm:mb-6 bg-white rounded-lg p-3 border-2 border-blue-500">
-                <span className="font-bold text-base sm:text-lg text-gray-900">{t('cart.total')}</span>
+            <div className="flex justify-between items-center mb-2 sm:mb-6 bg-white rounded-lg p-2 sm:p-3 border-2 border-blue-500">
+                <span className="font-bold text-sm sm:text-lg text-gray-900">{t('cart.total')}</span>
                 <Price
                     amount={total}
                     locale={locale as Locale}
@@ -97,13 +97,13 @@ export default function CartSummary({
             </div>
 
             {/* Item Count Info */}
-            <p className={`text-xs sm:text-sm text-gray-600 mb-3 sm:mb-6 ${isArabic ? 'text-right' : 'text-left'}`}>
+            <p className={`text-xs sm:text-sm text-gray-600 mb-2 sm:mb-4 ${isArabic ? 'text-right' : 'text-left'}`}>
                 {t('cart.items_in_cart', { count: itemCount })}
             </p>
 
             {/* Shipping Notice */}
             {shipping === 0 && (
-                <div className="mb-3 sm:mb-6 p-2 sm:p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="mb-2 sm:mb-4 p-1.5 sm:p-3 bg-amber-50 border border-amber-200 rounded-lg">
                     <p className={`text-xs sm:text-sm text-amber-800 ${isArabic ? 'text-right' : 'text-left'}`}>
                         {t('cart.shipping_calculated_message')}
                     </p>
@@ -111,10 +111,10 @@ export default function CartSummary({
             )}
 
             {/* Buttons */}
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-3">
                 <Button
                     onClick={onCheckout}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 sm:py-6 font-semibold text-sm sm:text-base"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-2 sm:py-6 font-semibold text-sm sm:text-base"
                     disabled={isLoading}
                 >
                     {t('cart.checkout')}
@@ -122,7 +122,7 @@ export default function CartSummary({
                 <Button
                     onClick={onContinueShopping}
                     variant="outline"
-                    className="w-full py-3 sm:py-6 font-semibold text-sm sm:text-base"
+                    className="w-full py-2 sm:py-6 font-semibold text-sm sm:text-base"
                     disabled={isLoading}
                 >
                     {t('cart.continue_shopping')}
@@ -131,7 +131,7 @@ export default function CartSummary({
 
             {/* Free Shipping Threshold */}
             {subtotal < 10 && subtotal > 0 && (
-                <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mt-2 sm:mt-4 p-1.5 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className={`text-xs sm:text-sm text-blue-800 ${isArabic ? 'text-right' : 'text-left'}`}>
                         {t('cart.free_shipping_threshold', {
                             amount: formatOMR(10 - subtotal, locale as Locale),

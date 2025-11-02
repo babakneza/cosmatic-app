@@ -21,6 +21,7 @@ import type { Locale } from '@/types';
 interface AuthMenuProps {
     className?: string;
     variant?: 'desktop' | 'mobile';
+    onLogout?: () => void;
 }
 
 /**
@@ -44,7 +45,7 @@ interface AuthMenuProps {
  * <AuthMenu variant="mobile" />
  * ```
  */
-export default function AuthMenu({ className, variant = 'desktop' }: AuthMenuProps) {
+export default function AuthMenu({ className, variant = 'desktop', onLogout }: AuthMenuProps) {
     const params = useParams();
     const locale = params?.locale as Locale;
     const t = useTranslations();
@@ -56,6 +57,7 @@ export default function AuthMenu({ className, variant = 'desktop' }: AuthMenuPro
     const handleLogout = async () => {
         await logout();
         setIsOpen(false);
+        onLogout?.();
     };
 
     // Desktop dropdown menu

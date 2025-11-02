@@ -28,7 +28,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 const result = await getOrder(orderId, accessToken);
                 setOrder(result);
             } catch (err: any) {
-                setError(err.message || 'Failed to load order details');
+                setError(err.message || t('orders.failed_to_load_order_details'));
             } finally {
                 setLoading(false);
             }
@@ -59,7 +59,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <div>
                     <p className="font-medium">{t('common.error')}</p>
-                    <p className="text-sm mt-1">{error || 'Order not found'}</p>
+                    <p className="text-sm mt-1">{error || t('orders.order_not_found')}</p>
                 </div>
             </div>
         );
@@ -67,11 +67,11 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
 
     const getStatusTimeline = () => {
         const statuses: Array<{ status: string; label: string; description: string }> = [
-            { status: 'pending', label: 'Order Placed', description: 'We received your order' },
-            { status: 'confirmed', label: 'Confirmed', description: 'Payment confirmed' },
-            { status: 'processing', label: 'Processing', description: 'Preparing for shipment' },
-            { status: 'shipped', label: 'Shipped', description: 'On its way to you' },
-            { status: 'delivered', label: 'Delivered', description: 'Order delivered' },
+            { status: 'pending', label: t('orders.order_placed'), description: t('orders.order_placed') },
+            { status: 'confirmed', label: t('orders.confirmed'), description: t('orders.payment_confirmed') },
+            { status: 'processing', label: t('orders.processing'), description: t('orders.preparing_shipment') },
+            { status: 'shipped', label: t('orders.shipped'), description: t('orders.on_its_way') },
+            { status: 'delivered', label: t('orders.delivered'), description: t('orders.order_delivered') },
         ];
 
         const currentIndex = statuses.findIndex(s => s.status === order.status);
@@ -120,35 +120,35 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 <div className="flex flex-col gap-4 mb-4 md:mb-6">
                     <div>
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <div className={`${statusColor.bg} ${statusColor.text} px-3 py-1 rounded-full text-xs md:text-sm font-semibold capitalize`}>
-                                {order.status}
+                            <div className={`${statusColor.bg} ${statusColor.text} px-3 py-1 rounded-full text-xs md:text-sm font-semibold`}>
+                                {t(`orders.${order.status}`)}
                             </div>
                             {order.payment_status === 'completed' && (
                                 <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs md:text-sm font-semibold">
-                                    ✓ Paid
+                                    ✓ {t('orders.paid')}
                                 </div>
                             )}
                         </div>
                         <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-1 break-words">
-                            Order #{order.order_number}
+                            {t('orders.order_number')}{order.order_number}
                         </h2>
                         <p className="text-xs md:text-sm text-gray-600">
-                            Placed on {new Date(order.created_at || '').toLocaleDateString()} at {new Date(order.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {t('orders.placed_on')} {new Date(order.created_at || '').toLocaleDateString()} {t('orders.placed_on_time')} {new Date(order.created_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
                     <div className="md:text-right">
-                        <p className="text-xs text-gray-600 mb-1">Total Amount</p>
+                        <p className="text-xs text-gray-600 mb-1">{t('orders.total_amount')}</p>
                         <p className="text-2xl md:text-4xl font-bold text-gold mb-3 md:mb-4">
                             {formatOMR(order.total, locale as 'ar' | 'en')}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-2 md:justify-end">
                             <button className="px-3 md:px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2 font-medium text-sm flex-1 sm:flex-none">
                                 <Download className="w-4 h-4" />
-                                <span className="hidden sm:inline">Invoice</span>
+                                <span className="hidden sm:inline">{t('orders.invoice')}</span>
                             </button>
                             <button className="px-3 md:px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-2 font-medium text-sm flex-1 sm:flex-none">
                                 <RotateCcw className="w-4 h-4" />
-                                <span className="hidden sm:inline">Reorder</span>
+                                <span className="hidden sm:inline">{t('orders.reorder')}</span>
                             </button>
                         </div>
                     </div>
@@ -159,7 +159,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-8">
                 <h3 className="font-bold text-gray-900 mb-4 md:mb-8 flex items-center gap-2 text-base md:text-lg">
                     <Package className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                    Order Status Timeline
+                    {t('orders.order_status_timeline')}
                 </h3>
                 <div className="relative">
                     {/* Timeline Line */}
@@ -190,7 +190,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                                     </p>
                                     {item.current && item.status !== 'delivered' && (
                                         <div className="mt-2 inline-block px-3 py-1 bg-gold/10 text-gold text-xs font-semibold rounded-full">
-                                            Current Status
+                                            {t('orders.current_status')}
                                         </div>
                                     )}
                                 </div>
@@ -204,45 +204,45 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
                 <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
                     <Package className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                    Order Items ({order.items?.length || 0})
+                    {t('orders.order_items')} ({order.items?.length || 0})
                 </h3>
                 <div className="space-y-1 md:space-y-2">
                     {order.items && order.items.length > 0 ? (
                         <>
                             {/* Header */}
                             <div className="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-gray-200 px-2 md:px-4 text-xs md:text-sm font-semibold text-gray-600">
-                                <div className="col-span-6">Product</div>
-                                <div className="col-span-2 text-center">Qty</div>
-                                <div className="col-span-2 text-right">Price</div>
-                                <div className="col-span-2 text-right">Total</div>
+                                <div className="col-span-6">{t('orders.product')}</div>
+                                <div className="col-span-2 text-center">{t('orders.qty')}</div>
+                                <div className="col-span-2 text-right">{t('orders.price')}</div>
+                                <div className="col-span-2 text-right">{t('orders.total')}</div>
                             </div>
 
                             {/* Items */}
                             {order.items.map((item, index) => (
                                 <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-3 py-3 md:py-4 border-b border-gray-100 last:border-0 px-2 md:px-4 hover:bg-gray-50 rounded transition text-sm">
                                     <div className="md:col-span-6 flex flex-col justify-center">
-                                        <p className="font-semibold text-gray-900 text-xs md:text-base break-words">{item.product_name}</p>
+                                        <p className="font-semibold text-gray-900 text-xs md:text-base break-words">{locale === 'ar' && item.product_name_ar ? item.product_name_ar : item.product_name}</p>
                                         {item.variation_name && (
-                                            <p className="text-xs text-gray-600 mt-1">Variant: {item.variation_name}</p>
+                                            <p className="text-xs text-gray-600 mt-1">{t('orders.variant')}: {item.variation_name}</p>
                                         )}
                                     </div>
                                     <div className="md:col-span-2 flex items-center justify-between md:justify-center text-xs md:text-base">
-                                        <span className="text-gray-600 md:hidden font-medium">Qty:</span>
+                                        <span className="text-gray-600 md:hidden font-medium">{t('orders.qty')}:</span>
                                         <span className="font-medium text-gray-900">×{item.quantity}</span>
                                     </div>
                                     <div className="md:col-span-2 flex items-center justify-between md:justify-end text-xs md:text-base">
-                                        <span className="text-gray-600 md:hidden font-medium">Price:</span>
+                                        <span className="text-gray-600 md:hidden font-medium">{t('orders.price')}:</span>
                                         <span className="text-gray-700">{formatOMR(item.unit_price, locale as 'ar' | 'en')}</span>
                                     </div>
                                     <div className="md:col-span-2 flex items-center justify-between md:justify-end text-xs md:text-base">
-                                        <span className="text-gray-600 md:hidden font-medium">Total:</span>
+                                        <span className="text-gray-600 md:hidden font-medium">{t('orders.total')}:</span>
                                         <span className="font-bold text-gold">{formatOMR(item.line_total, locale as 'ar' | 'en')}</span>
                                     </div>
                                 </div>
                             ))}
                         </>
                     ) : (
-                        <p className="text-gray-600 py-4 text-sm">No items in this order</p>
+                        <p className="text-gray-600 py-4 text-sm">{t('orders.no_items')}</p>
                     )}
                 </div>
             </div>
@@ -252,31 +252,31 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
                     <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
                         <CreditCard className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                        Order Summary
+                        {t('orders.order_summary')}
                     </h3>
                     <div className="space-y-2 md:space-y-3 text-sm md:text-base">
                         <div className="flex justify-between">
-                            <p className="text-gray-600">Subtotal</p>
+                            <p className="text-gray-600">{t('orders.subtotal')}</p>
                             <p className="font-semibold text-gray-900">{formatOMR(order.subtotal, locale as 'ar' | 'en')}</p>
                         </div>
                         {order.shipping_cost > 0 && (
                             <div className="flex justify-between">
-                                <p className="text-gray-600">Shipping</p>
+                                <p className="text-gray-600">{t('orders.shipping')}</p>
                                 <p className="font-semibold text-gray-900">{formatOMR(order.shipping_cost, locale as 'ar' | 'en')}</p>
                             </div>
                         )}
                         <div className="flex justify-between">
-                            <p className="text-gray-600">Tax ({(order.tax_rate * 100).toFixed(1)}%)</p>
+                            <p className="text-gray-600">{t('orders.tax')} ({(order.tax_rate * 100).toFixed(1)}%)</p>
                             <p className="font-semibold text-gray-900">{formatOMR(order.tax_amount, locale as 'ar' | 'en')}</p>
                         </div>
                         {order.discount_amount && order.discount_amount > 0 && (
                             <div className="flex justify-between text-green-600">
-                                <p>Discount</p>
+                                <p>{t('orders.discount')}</p>
                                 <p className="font-semibold">-{formatOMR(order.discount_amount, locale as 'ar' | 'en')}</p>
                             </div>
                         )}
                         <div className="border-t pt-2 md:pt-3 flex justify-between">
-                            <p className="font-bold text-gray-900">Total</p>
+                            <p className="font-bold text-gray-900">{t('orders.total')}</p>
                             <p className="text-lg md:text-xl font-bold text-gold">{formatOMR(order.total, locale as 'ar' | 'en')}</p>
                         </div>
                     </div>
@@ -287,27 +287,27 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
                         <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
                             <Truck className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                            Tracking Information
+                            {t('orders.tracking_information')}
                         </h3>
                         <div className="space-y-3 md:space-y-4">
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
-                                <p className="text-xs text-gray-600 mb-2 uppercase font-semibold">Tracking Number</p>
+                                <p className="text-xs text-gray-600 mb-2 uppercase font-semibold">{t('orders.tracking_number')}</p>
                                 <div className="flex items-center gap-2 mb-2 md:mb-3 flex-wrap">
                                     <p className="font-mono font-bold text-base md:text-lg text-gray-900 break-all">{order.tracking_number}</p>
                                     <button
                                         onClick={() => handleCopyTracking(order.tracking_number!)}
                                         className="p-1.5 md:p-2 hover:bg-blue-100 rounded transition text-gray-600 flex-shrink-0"
-                                        title="Copy tracking number"
+                                        title={t('orders.copy_tracking_button')}
                                     >
                                         <Copy className="w-4 h-4" />
                                     </button>
                                 </div>
                                 {copiedTracking && (
-                                    <p className="text-xs text-green-600">✓ Copied to clipboard</p>
+                                    <p className="text-xs text-green-600">✓ {t('orders.copied_to_clipboard')}</p>
                                 )}
                             </div>
                             <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm md:text-base">
-                                Track Your Shipment
+                                {t('orders.track_shipment')}
                             </button>
                         </div>
                     </div>
@@ -320,7 +320,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
                     <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
                         <Truck className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                        Shipping Address
+                        {t('orders.shipping_address')}
                     </h3>
                     {order.shipping_address && (
                         <div className="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-700 bg-gray-50 p-3 md:p-4 rounded-lg">
@@ -342,7 +342,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
                     <h3 className="font-bold text-gray-900 mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
                         <MapPin className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                        Billing Address
+                        {t('orders.billing_address')}
                     </h3>
                     {order.billing_address && (
                         <div className="space-y-2 md:space-y-3">
@@ -359,7 +359,7 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
                                 <p>{order.billing_address.postal_code} {order.billing_address.country}</p>
                             </div>
                             <div className="border-t pt-2 md:pt-3">
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1 md:mb-2">Payment Method</p>
+                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1 md:mb-2">{t('orders.payment_method')}</p>
                                 <p className="font-semibold text-gray-900 capitalize flex items-center gap-2 text-sm">
                                     <CreditCard className="w-4 h-4 text-gold flex-shrink-0" />
                                     {order.payment_method}
@@ -374,23 +374,23 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             <div className="bg-gradient-to-r from-gold/5 to-amber-50 rounded-lg border border-gold/20 p-4 md:p-6">
                 <h3 className="font-bold text-gray-900 mb-3 md:mb-4 flex items-center gap-2 text-base md:text-lg">
                     <MessageSquare className="w-4 md:w-5 h-4 md:h-5 text-gold" />
-                    Need Help?
+                    {t('orders.need_help')}
                 </h3>
                 <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
-                    If you have any questions about your order or need assistance, don't hesitate to reach out to our customer support team.
+                    {t('orders.help_message')}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-4">
                     <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
                         <Mail className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
-                        <span className="hidden sm:inline">Email Support</span>
+                        <span className="hidden sm:inline">{t('orders.email_support')}</span>
                     </button>
                     <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
                         <Phone className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
-                        <span className="hidden sm:inline">Call Us</span>
+                        <span className="hidden sm:inline">{t('orders.call_us')}</span>
                     </button>
                     <button className="flex items-center justify-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 bg-white border border-gray-200 rounded-lg hover:border-gold hover:bg-gold/5 transition font-medium text-gray-700 text-sm md:text-base">
                         <MessageSquare className="w-4 md:w-5 h-4 md:h-5 text-gold flex-shrink-0" />
-                        <span className="hidden sm:inline">Live Chat</span>
+                        <span className="hidden sm:inline">{t('orders.live_chat')}</span>
                     </button>
                 </div>
             </div>
@@ -398,10 +398,10 @@ export default function OrderDetails({ orderId, accessToken }: OrderDetailsProps
             {/* Quick Actions */}
             {order.status === 'delivered' && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 md:p-6">
-                    <h3 className="font-bold text-gray-900 mb-3 md:mb-4 text-base md:text-lg">Satisfied with Your Order?</h3>
-                    <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">Help us improve by sharing your experience with the products you purchased.</p>
+                    <h3 className="font-bold text-gray-900 mb-3 md:mb-4 text-base md:text-lg">{t('orders.satisfied_with_order')}</h3>
+                    <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base">{t('orders.share_experience')}</p>
                     <button className="px-4 md:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition text-sm md:text-base">
-                        Leave a Review
+                        {t('orders.leave_review')}
                     </button>
                 </div>
             )}

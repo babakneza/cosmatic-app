@@ -177,7 +177,7 @@ export default function AccountPage({ params }: AccountPageProps) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-50 py-4 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 {/* Success/Error Message */}
                 {message && (
@@ -267,52 +267,40 @@ export default function AccountPage({ params }: AccountPageProps) {
                                         className="mt-1 w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700"
                                     />
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Quick Actions */}
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Settings className="w-5 h-5 text-gold" />
-                                {t('account.quick_actions')}
-                            </h2>
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => router.push(`/${resolvedParams.locale}/account/change-password`)}
-                                    className="w-full px-4 py-3 bg-gold hover:bg-amber-600 text-gray-900 font-medium rounded-lg transition shadow-md hover:shadow-lg">
-                                    {t('account.change_password')}
-                                </button>
-                                {!isEditing ? (
-                                    <button
-                                        onClick={() => setIsEditing(true)}
-                                        className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition"
-                                    >
-                                        {t('account.edit_profile')}
-                                    </button>
-                                ) : (
-                                    <div className="space-y-2">
+                                {/* Edit Profile Button */}
+                                <div className="pt-4 border-t border-gray-200">
+                                    {!isEditing ? (
                                         <button
-                                            onClick={handleSaveProfile}
-                                            disabled={isSaving}
-                                            className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition"
+                                            onClick={() => setIsEditing(true)}
+                                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition"
                                         >
-                                            {isSaving ? t('common.saving') : t('account.save_profile')}
+                                            {t('account.edit_profile')}
                                         </button>
-                                        <button
-                                            onClick={() => {
-                                                setIsEditing(false);
-                                                setEditedData({
-                                                    first_name: user?.first_name || '',
-                                                    last_name: user?.last_name || '',
-                                                });
-                                            }}
-                                            disabled={isSaving}
-                                            className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-200 text-gray-900 font-medium rounded-lg transition"
-                                        >
-                                            {t('common.cancel')}
-                                        </button>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <div className="space-y-2">
+                                            <button
+                                                onClick={handleSaveProfile}
+                                                disabled={isSaving}
+                                                className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition"
+                                            >
+                                                {isSaving ? t('common.saving') : t('account.save_profile')}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setIsEditing(false);
+                                                    setEditedData({
+                                                        first_name: user?.first_name || '',
+                                                        last_name: user?.last_name || '',
+                                                    });
+                                                }}
+                                                disabled={isSaving}
+                                                className="w-full px-4 py-3 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-200 text-gray-900 font-medium rounded-lg transition"
+                                            >
+                                                {t('common.cancel')}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

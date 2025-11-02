@@ -157,7 +157,7 @@ export async function getProducts(filters: any = {}) {
                 product.rating_count = ratingData.count;
             }
 
-            return product;
+            return processProductImages(product, directusUrl);
         });
 
         return {
@@ -247,7 +247,7 @@ export async function getProduct(idOrSlug: string) {
                         product.rating_count = ratingData.count;
                     }
 
-                    return { data: product };
+                    return { data: processProductImages(product, directusUrl) };
                 }
 
                 throw new Error(`Product not found: ${idOrSlug}`);
@@ -277,7 +277,7 @@ export async function getProduct(idOrSlug: string) {
                         product.rating_count = ratingData.count;
                     }
 
-                    return { data: product };
+                    return { data: processProductImages(product, directusUrl) };
                 }
 
                 throw new Error(`Product not found: ${idOrSlug}`);
@@ -298,6 +298,47 @@ export async function getProduct(idOrSlug: string) {
         }
         throw error;
     }
+}
+
+function processProductImages(product: any, baseUrl: string): any {
+    const processedProduct = { ...product };
+    const publicToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
+
+    const constructAssetUrl = (fileId: string | null) => {
+        if (!fileId) return null;
+        const url = new URL(`${baseUrl}/assets/${fileId}`);
+        if (publicToken) {
+            url.searchParams.append('access_token', publicToken);
+        }
+        return url.toString();
+    };
+
+    if (product.main_image) {
+        const imageId = typeof product.main_image === 'string' ? product.main_image : product.main_image.id;
+        processedProduct.mainImageUrl = constructAssetUrl(imageId);
+    }
+
+    if (product.image) {
+        const imageId = typeof product.image === 'string' ? product.image : product.image.id;
+        processedProduct.image = constructAssetUrl(imageId);
+    }
+
+    if (product.images && Array.isArray(product.images)) {
+        processedProduct.images = product.images.map((img: any) => {
+            const imageId = typeof img === 'string' ? img : img.id;
+            return constructAssetUrl(imageId);
+        }).filter(Boolean);
+    }
+
+    if (product.image_gallery && Array.isArray(product.image_gallery)) {
+        processedProduct.processedImages = product.image_gallery.map((item: any) => {
+            const fileId = item.directus_files_id || (typeof item === 'string' ? item : item.id);
+            const url = constructAssetUrl(fileId);
+            return url ? { id: fileId, url } : null;
+        }).filter(Boolean);
+    }
+
+    return processedProduct;
 }
 
 function calculateAverageRating(reviews: any[]) {

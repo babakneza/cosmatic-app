@@ -11,8 +11,9 @@ services:
     networks:
       - buyjan-network
     environment:
-      # Directus Configuration - Use container hostname for internal communication
-      NEXT_PUBLIC_DIRECTUS_URL: ${NEXT_PUBLIC_DIRECTUS_URL:-http://directus:8055}
+      # Directus Configuration
+      NEXT_PUBLIC_DIRECTUS_URL: ${NEXT_PUBLIC_DIRECTUS_URL:-https://admin.buyjan.com}
+      DIRECTUS_URL: ${DIRECTUS_URL:-https://admin.buyjan.com}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://buyjan.com}
       DIRECTUS_API_TOKEN: ${DIRECTUS_API_TOKEN}
       NEXT_PUBLIC_DIRECTUS_API_TOKEN: ${NEXT_PUBLIC_DIRECTUS_API_TOKEN}

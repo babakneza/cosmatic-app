@@ -165,7 +165,7 @@ export default function HomeContent({
                         Premium Beauty Products in Oman
                     </p>
                     <Link
-                        href={`/${locale}/products`}
+                        href={`/${locale}/shop`}
                         className="bg-primary hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors inline-block shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                     >
                         {t('shop')}

@@ -31,7 +31,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
         const fetchOrders = async () => {
             try {
                 if (!customerId || !accessToken) {
-                    setError('Unable to load orders - user information missing');
+                    setError(t('orders.unable_to_load_orders_missing_info'));
                     setLoading(false);
                     return;
                 }
@@ -41,7 +41,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                 const result = await getCustomerOrders(customerId, accessToken, { limit: 50 });
                 setOrders(result.data);
             } catch (err: any) {
-                setError(err.message || 'Failed to load orders');
+                setError(err.message || t('orders.failed_to_load_orders'));
             } finally {
                 setLoading(false);
             }
@@ -167,13 +167,13 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                 <div className="inline-block p-4 bg-gray-100 rounded-full mb-4">
                     <Package className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h3>
-                <p className="text-gray-600 mb-6">Start your luxury beauty journey with BuyJan</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('orders.no_orders_yet')}</h3>
+                <p className="text-gray-600 mb-6">{t('orders.start_luxury_journey')}</p>
                 <Link
                     href={`/${locale}/shop`}
                     className="inline-block px-8 py-3 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium rounded-lg transition shadow-lg hover:shadow-xl"
                 >
-                    Shop Now
+                    {t('orders.shop_now')}
                 </Link>
             </div>
         );
@@ -187,7 +187,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                     <div className="bg-gradient-to-br from-gold/10 to-amber-100/10 border border-gold/20 rounded-lg p-3 md:p-4">
                         <div className="flex items-start justify-between">
                             <div className="min-w-0 flex-1">
-                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">Total Orders</p>
+                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{t('orders.total_orders')}</p>
                                 <p className="text-xl md:text-2xl font-bold text-gray-900 mt-1">{stats.totalOrders}</p>
                             </div>
                             <TrendingUp className="w-6 md:w-8 h-6 md:h-8 text-gold opacity-50 flex-shrink-0" />
@@ -197,7 +197,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                     <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 rounded-lg p-3 md:p-4">
                         <div className="flex items-start justify-between">
                             <div className="min-w-0 flex-1">
-                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">Total Spent</p>
+                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{t('orders.total_spent')}</p>
                                 <p className="text-lg md:text-2xl font-bold text-gray-900 mt-1 truncate">{formatOMR(stats.totalSpent, locale as 'ar' | 'en')}</p>
                             </div>
                             <span className="text-2xl md:text-3xl flex-shrink-0">💳</span>
@@ -207,7 +207,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200/50 rounded-lg p-3 md:p-4">
                         <div className="flex items-start justify-between">
                             <div className="min-w-0 flex-1">
-                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">Avg. Order</p>
+                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{t('orders.avg_order')}</p>
                                 <p className="text-lg md:text-2xl font-bold text-gray-900 mt-1 truncate">{formatOMR(stats.averageOrderValue, locale as 'ar' | 'en')}</p>
                             </div>
                             <span className="text-2xl md:text-3xl flex-shrink-0">📊</span>
@@ -217,7 +217,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                     <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200/50 rounded-lg p-3 md:p-4">
                         <div className="flex items-start justify-between">
                             <div className="min-w-0 flex-1">
-                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">Last Order</p>
+                                <p className="text-xs md:text-sm text-gray-600 font-medium truncate">{t('orders.last_order')}</p>
                                 <p className="text-lg md:text-xl font-bold text-gray-900 mt-1 truncate">{stats.lastOrder}</p>
                             </div>
                             <span className="text-2xl md:text-3xl flex-shrink-0">📅</span>
@@ -234,7 +234,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 md:w-5 h-4 md:h-5 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search by order #..."
+                            placeholder={t('orders.search_by_order')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-9 md:pl-10 pr-3 md:pr-4 py-1.5 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold"
@@ -245,7 +245,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                         className="px-2.5 md:px-4 py-1.5 md:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 md:gap-2 font-medium text-gray-700 text-sm flex-shrink-0"
                     >
                         <Filter className="w-4 h-4" />
-                        <span className="hidden sm:inline">Filters</span>
+                        <span className="hidden sm:inline">{t('orders.filters')}</span>
                     </button>
                 </div>
 
@@ -253,34 +253,34 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                 {showFilters && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 md:pt-3 border-t">
                         <div>
-                            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">Status</label>
+                            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">{t('orders.status')}</label>
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
                                 className="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold"
                             >
-                                <option value="all">All Statuses</option>
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="processing">Processing</option>
-                                <option value="shipped">Shipped</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="cancelled">Cancelled</option>
-                                <option value="refunded">Refunded</option>
+                                <option value="all">{t('orders.all_statuses')}</option>
+                                <option value="pending">{t('orders.pending')}</option>
+                                <option value="confirmed">{t('orders.confirmed')}</option>
+                                <option value="processing">{t('orders.processing')}</option>
+                                <option value="shipped">{t('orders.shipped')}</option>
+                                <option value="delivered">{t('orders.delivered')}</option>
+                                <option value="cancelled">{t('orders.cancelled')}</option>
+                                <option value="refunded">{t('orders.refunded')}</option>
                             </select>
                         </div>
 
                         <div>
-                            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">Sort By</label>
+                            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">{t('orders.sort_by')}</label>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                                 className="w-full px-2 md:px-3 py-1.5 md:py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold"
                             >
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="highest">Highest Price</option>
-                                <option value="lowest">Lowest Price</option>
+                                <option value="newest">{t('orders.newest_first')}</option>
+                                <option value="oldest">{t('orders.oldest_first')}</option>
+                                <option value="highest">{t('orders.highest_price')}</option>
+                                <option value="lowest">{t('orders.lowest_price')}</option>
                             </select>
                         </div>
                     </div>
@@ -290,8 +290,8 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                 {(statusFilter !== 'all' || searchTerm) && (
                     <div className="flex items-center justify-between gap-2 pt-2 md:pt-3 border-t flex-wrap">
                         <p className="text-xs md:text-sm text-gray-600 min-w-0">
-                            {filteredAndSortedOrders.length} order(s) found
-                            {searchTerm && ` for "${searchTerm}"`}
+                            {filteredAndSortedOrders.length} {t('orders.order_found')}
+                            {searchTerm && ` ${t('orders.for')} "${searchTerm}"`}
                             {statusFilter !== 'all' && ` / ${statusFilter}`}
                         </p>
                         <button
@@ -301,7 +301,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                             }}
                             className="text-xs md:text-sm text-gold hover:text-amber-600 font-medium whitespace-nowrap flex-shrink-0"
                         >
-                            Clear
+                            {t('orders.clear')}
                         </button>
                     </div>
                 )}
@@ -311,7 +311,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
             {filteredAndSortedOrders.length === 0 ? (
                 <div className="text-center py-8 md:py-12 bg-gray-50 rounded-lg border border-gray-200">
                     <Package className="w-10 md:w-12 h-10 md:h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-sm md:text-base text-gray-600">No orders match your search criteria</p>
+                    <p className="text-sm md:text-base text-gray-600">{t('orders.no_orders_match')}</p>
                 </div>
             ) : (
                 <div className="space-y-2 md:space-y-3">
@@ -330,7 +330,7 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                                                     <span className="text-lg md:text-xl flex-shrink-0">{getStatusIcon(order.status)}</span>
                                                     <div className="min-w-0 flex-1">
                                                         <h3 className="font-bold text-gray-900 text-sm md:text-lg group-hover:text-gold transition break-words">
-                                                            Order #{order.order_number}
+                                                            {t('orders.order_number')}{order.order_number}
                                                         </h3>
                                                         <p className="text-xs md:text-sm text-gray-500 mt-0.5">
                                                             {new Date(order.created_at || '').toLocaleDateString()}
@@ -347,32 +347,32 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                                         {/* Order Info Grid */}
                                         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3 mb-3 md:mb-4">
                                             <div className={`${statusColor.bg} ${statusColor.text} px-2 md:px-3 py-1.5 md:py-2 rounded-lg`}>
-                                                <p className="text-xs font-semibold uppercase tracking-wide">Status</p>
-                                                <p className="text-xs md:text-sm font-bold mt-0.5 md:mt-1 capitalize">{order.status}</p>
+                                                <p className="text-xs font-semibold uppercase tracking-wide">{t('orders.status')}</p>
+                                                <p className="text-xs md:text-sm font-bold mt-0.5 md:mt-1">{t(`orders.${order.status}`)}</p>
                                             </div>
 
                                             <div className="bg-blue-50 text-blue-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg">
-                                                <p className="text-xs font-semibold uppercase tracking-wide">Payment</p>
-                                                <p className={`text-xs md:text-sm font-bold mt-0.5 md:mt-1 capitalize ${order.payment_status === 'completed' ? 'text-green-700' : 'text-yellow-700'}`}>
-                                                    {order.payment_status}
+                                                <p className="text-xs font-semibold uppercase tracking-wide">{t('orders.payment')}</p>
+                                                <p className={`text-xs md:text-sm font-bold mt-0.5 md:mt-1 ${order.payment_status === 'completed' ? 'text-green-700' : 'text-yellow-700'}`}>
+                                                    {order.payment_status === 'completed' ? t('orders.paid') : t('common.loading')}
                                                 </p>
                                             </div>
 
                                             <div className="bg-amber-50 text-amber-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg">
-                                                <p className="text-xs font-semibold uppercase tracking-wide">Items</p>
+                                                <p className="text-xs font-semibold uppercase tracking-wide">{t('orders.items')}</p>
                                                 <p className="text-xs md:text-sm font-bold mt-0.5 md:mt-1">{order.items?.length || 0}</p>
                                             </div>
 
                                             {order.tracking_number && (
                                                 <div className="bg-teal-50 text-teal-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg min-w-0">
-                                                    <p className="text-xs font-semibold uppercase tracking-wide">Tracking</p>
+                                                    <p className="text-xs font-semibold uppercase tracking-wide">{t('orders.tracking')}</p>
                                                     <p className="text-xs md:text-sm font-mono font-bold mt-0.5 md:mt-1 truncate">{order.tracking_number}</p>
                                                 </div>
                                             )}
 
                                             {order.payment_method && (
                                                 <div className="bg-purple-50 text-purple-700 px-2 md:px-3 py-1.5 md:py-2 rounded-lg">
-                                                    <p className="text-xs font-semibold uppercase tracking-wide">Method</p>
+                                                    <p className="text-xs font-semibold uppercase tracking-wide">{t('orders.method')}</p>
                                                     <p className="text-xs md:text-sm font-bold mt-0.5 md:mt-1 capitalize truncate">{order.payment_method}</p>
                                                 </div>
                                             )}
@@ -381,16 +381,16 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                                         {/* Quick Preview of Items */}
                                         {order.items && order.items.length > 0 && (
                                             <div className="mb-3 md:mb-4 p-2 md:p-3 bg-gray-50 rounded-lg">
-                                                <p className="text-xs font-semibold text-gray-600 mb-1.5">Items Preview</p>
+                                                <p className="text-xs font-semibold text-gray-600 mb-1.5">{t('orders.items_preview')}</p>
                                                 <div className="space-y-0.5">
                                                     {order.items.slice(0, 2).map((item) => (
                                                         <p key={item.id} className="text-xs md:text-sm text-gray-700 truncate">
-                                                            • {item.product_name} <span className="text-gray-500">×{item.quantity}</span>
+                                                            • {locale === 'ar' && item.product_name_ar ? item.product_name_ar : item.product_name} <span className="text-gray-500">×{item.quantity}</span>
                                                         </p>
                                                     ))}
                                                     {order.items.length > 2 && (
                                                         <p className="text-xs md:text-sm text-gray-600 font-medium">
-                                                            +{order.items.length - 2} more item(s)
+                                                            +{order.items.length - 2} {t('orders.more_items')}
                                                         </p>
                                                     )}
                                                 </div>
@@ -405,23 +405,23 @@ export default function OrdersList({ customerId, accessToken, locale }: OrdersLi
                                         href={`/${locale}/account/orders/${order.id}`}
                                         className="px-3 md:px-4 py-1 md:py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition text-xs md:text-sm"
                                     >
-                                        Details
+                                        {t('orders.details')}
                                     </Link>
                                     {(order.status === 'delivered' || order.status === 'shipped') && (
                                         <button className="px-3 md:px-4 py-1 md:py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition text-xs md:text-sm flex items-center gap-1.5">
                                             <Truck className="w-3 md:w-4 h-3 md:h-4" />
-                                            <span className="hidden sm:inline">Track</span>
+                                            <span className="hidden sm:inline">{t('orders.track')}</span>
                                         </button>
                                     )}
                                     {order.status === 'delivered' && (
                                         <button className="px-3 md:px-4 py-1 md:py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition text-xs md:text-sm flex items-center gap-1.5">
                                             <RotateCcw className="w-3 md:w-4 h-3 md:h-4" />
-                                            <span className="hidden sm:inline">Reorder</span>
+                                            <span className="hidden sm:inline">{t('orders.reorder')}</span>
                                         </button>
                                     )}
                                     <button className="px-3 md:px-4 py-1 md:py-2 bg-gold hover:bg-amber-600 text-white rounded-lg font-medium transition text-xs md:text-sm flex items-center gap-1.5">
                                         <Download className="w-3 md:w-4 h-3 md:h-4" />
-                                        <span className="hidden sm:inline">Invoice</span>
+                                        <span className="hidden sm:inline">{t('orders.invoice')}</span>
                                     </button>
                                 </div>
                             </div>

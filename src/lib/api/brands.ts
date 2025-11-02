@@ -2,11 +2,30 @@ import { directusClient, directusQuery, COLLECTIONS, getDirectusClient } from '.
 import { readItems } from '@directus/sdk';
 import { Brand } from '@/types';
 
+function processBrandImage(brand: any, baseUrl: string): any {
+    const processedBrand = { ...brand };
+    const publicToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
+
+    if (brand.logo) {
+        const imageId = typeof brand.logo === 'string' ? brand.logo : brand.logo.id;
+        if (imageId) {
+            const url = new URL(`${baseUrl}/assets/${imageId}`);
+            if (publicToken) {
+                url.searchParams.append('access_token', publicToken);
+            }
+            processedBrand.logo = url.toString();
+        }
+    }
+
+    return processedBrand;
+}
+
 /**
  * Fetch all brands
  */
 export async function getBrands() {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
         console.log('[Brands] Fetching all brands using SDK');
 
         // Use the new SDK client
@@ -19,19 +38,20 @@ export async function getBrands() {
         );
 
         console.log(`[Brands] Found ${brands.length} brands`);
-        return { data: brands };
+        return { data: (brands || []).map((brand: any) => processBrandImage(brand, baseUrl)) };
     } catch (error) {
         console.error('[Brands] Error fetching brands with SDK:', error);
 
         // Try with the legacy client as fallback
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
             console.log('[Brands] Trying legacy client as fallback');
             const response = await directusClient.get(COLLECTIONS.BRANDS, {
                 fields: 'id,name,name_ar,slug,description,description_ar,logo',
                 limit: -1, // Get all brands
             });
 
-            return response;
+            return { data: (response.data || []).map((brand: any) => processBrandImage(brand, baseUrl)) };
         } catch (fallbackError) {
             console.error('[Brands] Fallback also failed:', fallbackError);
             console.log('[Brands] Using fallback brands data');
@@ -45,6 +65,7 @@ export async function getBrands() {
  */
 export async function getFeaturedBrands(limit: number = 6) {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
         console.log(`[Brands] Fetching featured brands (limit: ${limit}) using SDK`);
 
         // Use the new SDK client
@@ -64,12 +85,13 @@ export async function getFeaturedBrands(limit: number = 6) {
             return { data: getFallbackBrands() };
         }
 
-        return { data: brands };
+        return { data: (brands || []).map((brand: any) => processBrandImage(brand, baseUrl)) };
     } catch (error) {
         console.error('[Brands] Error fetching featured brands with SDK:', error);
 
         // Try with the legacy client as fallback
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
             console.log('[Brands] Trying legacy client as fallback');
             const response = await directusClient.get(COLLECTIONS.BRANDS, {
                 fields: 'id,name,name_ar,slug,description,description_ar,logo',
@@ -78,7 +100,7 @@ export async function getFeaturedBrands(limit: number = 6) {
 
             if (response.data && response.data.length > 0) {
                 console.log(`[Brands] Found ${response.data.length} brands with legacy client`);
-                return response;
+                return { data: (response.data || []).map((brand: any) => processBrandImage(brand, baseUrl)) };
             }
         } catch (fallbackError) {
             console.error('[Brands] Fallback also failed:', fallbackError);
@@ -139,6 +161,7 @@ export function getFallbackBrands() {
  */
 export async function getBrandBySlug(slug: string) {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
         const response = await directusClient.get(COLLECTIONS.BRANDS, {
             fields: 'id,name,name_ar,slug,description,description_ar,logo',
             filter: { slug: { _eq: slug } },
@@ -146,7 +169,7 @@ export async function getBrandBySlug(slug: string) {
         });
 
         if (response.data && response.data.length > 0) {
-            return response.data[0];
+            return processBrandImage(response.data[0], baseUrl);
         }
 
         return null;

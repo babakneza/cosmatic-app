@@ -53,11 +53,11 @@ export default function RegisterPage({ params: paramsPromise }: RegisterPageProp
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-4 sm:py-12 px-4">
             <div className="w-full max-w-md">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="text-center mb-4 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                         {t('auth.register')}
                     </h1>
                     <p className="text-gray-600">
@@ -73,14 +73,6 @@ export default function RegisterPage({ params: paramsPromise }: RegisterPageProp
                         onSubmit={handleRegister}
                     />
                 </div>
-
-                {/* Footer */}
-                <p className="text-center text-sm text-gray-600 mt-6">
-                    {t('auth.already_have_account')}{' '}
-                    <a href={`/${locale}/auth/login`} className="text-gold hover:underline font-medium">
-                        {t('auth.login_here')}
-                    </a>
-                </p>
             </div>
         </div>
     );

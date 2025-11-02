@@ -75,11 +75,38 @@ export async function GET(
 
         // Transform data to map Directus field names to Order type expectations
         const order = data.data || data;
+
+        // Fetch order items for this order
+        let orderItems: any[] = [];
+        try {
+            const itemsUrl = new URL(`${directusUrl}/items/order_items`);
+            itemsUrl.searchParams.append('fields', '*');
+            itemsUrl.searchParams.append('filter', `{"order":{"_eq":"${orderId}"}}`);
+
+            const itemsResponse = await fetch(itemsUrl.toString(), {
+                headers: {
+                    'Authorization': `Bearer ${adminToken}`,
+                },
+            });
+
+            if (itemsResponse.ok) {
+                const itemsData = await itemsResponse.json();
+                orderItems = itemsData.data || [];
+                console.log('[Orders API] Fetched order items:', orderItems.length);
+            }
+        } catch (e) {
+            console.error('[Orders API] Failed to fetch order items:', e);
+        }
+
         const transformedOrder = {
             ...order,
             // Map Directus system fields to expected field names
             created_at: order.date_created || order.created_at,
             updated_at: order.date_updated || order.updated_at,
+            // Attach order items - handle both string IDs and expanded objects
+            items: orderItems.map((item: any) => ({
+                ...item,
+            })),
         };
 
         return NextResponse.json(

@@ -315,19 +315,18 @@ export default function InstagramProductCard({
             )}
 
             {/* Product Info Section - Instagram Style */}
-            <div className="p-2 sm:p-3 flex-1 flex flex-col gap-1.5">
-                {/* Product Name */}
-                <Link href={`/${locale}/products/${product.slug}`}>
-                    <h3 className="text-xs sm:text-sm font-semibold text-neutral-900 hover:text-primary transition-colors line-clamp-2">
-                        {productName}
-                    </h3>
-                </Link>
+            <div className="p-2 sm:p-3 flex-1 flex flex-col gap-1">
+                {/* Product Name with Rating on Right */}
+                <div className="flex items-start justify-between gap-2">
+                    <Link href={`/${locale}/products/${product.slug}`} className="flex-1 min-w-0">
+                        <h3 className="text-sm sm:text-base font-semibold text-neutral-900 hover:text-primary transition-colors line-clamp-2">
+                            {productName}
+                        </h3>
+                    </Link>
 
-                {/* Product Rating Section */}
-                {product.rating !== null && product.rating !== undefined && product.rating > 0 && (
-                    <div className="bg-neutral-50 rounded-md p-1.5 space-y-1">
-                        {/* Stars and Average Rating */}
-                        <div className="flex items-center gap-2">
+                    {/* Product Rating Section - Right Side */}
+                    {product.rating !== null && product.rating !== undefined && product.rating > 0 && (
+                        <div className="flex items-center gap-1 flex-shrink-0">
                             <div className="flex gap-0.5">
                                 {[...Array(5)].map((_, i) => {
                                     const rating = product.rating || 0;
@@ -337,7 +336,7 @@ export default function InstagramProductCard({
                                     return (
                                         <span
                                             key={i}
-                                            className={`text-sm ${isFull || isHalf ? 'text-accent' : 'text-neutral-300'
+                                            className={`text-xs ${isFull || isHalf ? 'text-accent' : 'text-neutral-300'
                                                 }`}
                                         >
                                             ★
@@ -348,16 +347,16 @@ export default function InstagramProductCard({
                             <span className="text-xs font-semibold text-neutral-900">
                                 {product.rating?.toFixed(1)}
                             </span>
-                        </div>
 
-                        {/* Review Count */}
-                        {product.rating_count !== null && product.rating_count !== undefined && (
-                            <div className="text-xs text-neutral-600">
-                                {product.rating_count} {t('product.reviews')}
-                            </div>
-                        )}
-                    </div>
-                )}
+                            {/* Review Count */}
+                            {product.rating_count !== null && product.rating_count !== undefined && (
+                                <div className="text-xs text-neutral-600">
+                                    ({product.rating_count})
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 {/* Price */}
                 <div className="flex items-center gap-1.5">

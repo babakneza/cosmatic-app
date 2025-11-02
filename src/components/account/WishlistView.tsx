@@ -209,49 +209,42 @@ export default function WishlistView({ locale }: WishlistViewProps) {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             {/* Wishlist Header Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
+            <div className="grid grid-cols-2 gap-2 md:gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg md:rounded-xl p-3 md:p-4">
+                    <div className="flex items-end justify-between gap-2">
                         <div>
-                            <p className="text-sm text-blue-600 font-medium mb-1">Total Items</p>
-                            <p className="text-3xl font-bold text-blue-900">{wishlistCount}</p>
+                            <p className="text-xs md:text-sm text-blue-600 font-medium mb-0.5 md:mb-1">Total Items</p>
+                            <p className="text-2xl md:text-3xl font-bold text-blue-900">{wishlistCount}</p>
                         </div>
-                        <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center">
-                            <Package className="w-6 h-6 text-blue-600" />
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Package className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-purple-600 font-medium mb-1">Total Value</p>
-                            <p className="text-3xl font-bold text-purple-900">
-                                {formatOMR(totalValue, locale as any)}
-                            </p>
-                        </div>
-                        <div className="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center">
-                            <TrendingUp className="w-6 h-6 text-purple-600" />
-                        </div>
-                    </div>
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg md:rounded-xl p-3 md:p-4">
+                    <p className="text-xs md:text-sm text-purple-600 font-medium mb-1 md:mb-2">Total Value</p>
+                    <p className="text-lg md:text-3xl font-bold text-purple-900 break-words">
+                        {formatOMR(totalValue, locale as any)}
+                    </p>
                 </div>
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1 md:gap-2 overflow-x-auto sm:flex-wrap">
                 {(['all', 'premium', 'trending'] as const).map((f) => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`px-4 py-2 rounded-full font-medium transition ${filter === f
+                        className={`px-2 md:px-4 py-1 md:py-2 rounded-full font-medium text-xs md:text-sm transition whitespace-nowrap ${filter === f
                             ? 'bg-primary text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                     >
                         {f === 'all'
-                            ? `All Items (${wishlistCount})`
+                            ? `All (${wishlistCount})`
                             : f === 'premium'
                                 ? `Premium (${items.filter((item) => item.productData?.price && item.productData.price > 100).length})`
                                 : `Trending (${Math.floor(wishlistCount / 2)})`}

@@ -124,7 +124,7 @@ export function extractGalleryImages(
 
         if (fileId) {
             // Construct the full URL using the assets endpoint with the UUID and access token
-            const directusToken = process.env.DIRECTUS_API_TOKEN || process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN;
+            const directusToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
             const imageUrl = directusToken
                 ? `${baseUrl}/assets/${fileId}?access_token=${directusToken}`
                 : `${baseUrl}/assets/${fileId}`;
@@ -208,7 +208,7 @@ export function processProductGallery(
 
         if (fileId) {
             // Generate the image URL directly with the UUID and access token
-            const directusToken = process.env.DIRECTUS_API_TOKEN || process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN;
+            const directusToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
             const imageUrl = directusToken
                 ? `${baseUrl}/assets/${fileId}?access_token=${directusToken}`
                 : `${baseUrl}/assets/${fileId}`;

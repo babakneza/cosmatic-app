@@ -8,6 +8,7 @@ import {
     Home,
     Heart,
     ShoppingBag,
+    Store,
     User,
     LogOut,
     LogIn,
@@ -71,16 +72,16 @@ export default function MobileBottomNav({
             id: 'home',
         },
         {
-            icon: ShoppingBag,
-            label: t('nav.shop'),
-            href: `/${locale}/shop`,
-            id: 'shop',
-        },
-        {
             icon: Heart,
             label: t('nav.wishlist'),
             href: `/${locale}/account/wishlist`,
             id: 'wishlist',
+        },
+        {
+            icon: Store,
+            label: t('nav.shop'),
+            href: `/${locale}/shop`,
+            id: 'shop',
         },
         {
             icon: ShoppingBag,

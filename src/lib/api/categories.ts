@@ -2,11 +2,31 @@ import { directusClient, directusQuery, COLLECTIONS, getDirectusClient } from '.
 import { readItems } from '@directus/sdk';
 import { Category } from '@/types';
 
+function processCategoryImage(category: any, baseUrl: string): any {
+    const processedCategory = { ...category };
+    const publicToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
+
+    if (category.image) {
+        const imageId = typeof category.image === 'string' ? category.image : category.image.id;
+        if (imageId) {
+            const url = new URL(`${baseUrl}/assets/${imageId}`);
+            if (publicToken) {
+                url.searchParams.append('access_token', publicToken);
+            }
+            processedCategory.image = url.toString();
+        }
+    }
+
+    return processedCategory;
+}
+
 /**
  * Fetch all categories
  */
 export async function getCategories() {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
+        
         // Use the new SDK client
         const directus = await getDirectusClient();
         const categories = await (directus as any).request(
@@ -16,18 +36,19 @@ export async function getCategories() {
             } as any)
         );
 
-        return categories;
+        return (categories || []).map((cat: any) => processCategoryImage(cat, baseUrl));
     } catch (error) {
         console.error('[Categories] Error fetching categories with SDK:', error);
 
         // Try with the legacy client as fallback
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
             const response = await directusClient.get(COLLECTIONS.CATEGORIES, {
                 fields: 'id,name,name_ar,slug,description,description_ar,image,icon,parent',
                 limit: -1, // Get all categories
             });
 
-            return response.data;
+            return (response.data || []).map((cat: any) => processCategoryImage(cat, baseUrl));
         } catch (fallbackError) {
             console.error('[Categories] Fallback also failed:', fallbackError);
             return [];
@@ -40,6 +61,8 @@ export async function getCategories() {
  */
 export async function getFeaturedCategories(limit: number = 6) {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
+        
         // Use the new SDK client
         const directus = await getDirectusClient();
         const categories = await (directus as any).request(
@@ -54,19 +77,20 @@ export async function getFeaturedCategories(limit: number = 6) {
             return getFallbackCategories();
         }
 
-        return categories;
+        return (categories || []).map((cat: any) => processCategoryImage(cat, baseUrl));
     } catch (error) {
         console.error('[Categories] Error fetching featured categories with SDK:', error);
 
         // Try with the legacy client as fallback
         try {
+            const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
             const response = await directusClient.get(COLLECTIONS.CATEGORIES, {
                 fields: 'id,name,name_ar,slug,description,description_ar,image,icon,parent',
                 limit: limit,
             });
 
             if (response.data && response.data.length > 0) {
-                return response.data;
+                return (response.data || []).map((cat: any) => processCategoryImage(cat, baseUrl));
             }
         } catch (fallbackError) {
             console.error('[Categories] Fallback also failed:', fallbackError);
@@ -126,6 +150,7 @@ export function getFallbackCategories() {
  */
 export async function getCategoryBySlug(slug: string) {
     try {
+        const baseUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
         const response = await directusClient.get(COLLECTIONS.CATEGORIES, {
             fields: 'id,name,name_ar,slug,description,description_ar,image,icon,parent',
             filter: { slug: { _eq: slug } },
@@ -133,7 +158,7 @@ export async function getCategoryBySlug(slug: string) {
         });
 
         if (response.data && response.data.length > 0) {
-            return response.data[0];
+            return processCategoryImage(response.data[0], baseUrl);
         }
 
         return null;

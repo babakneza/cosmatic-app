@@ -49,8 +49,9 @@ export default function Header() {
 
             <div className="container mx-auto px-4">
                 <div className="py-4">
-                    <div className="flex items-center justify-between">
-                        {/* Logo */}
+                    {/* Desktop Layout */}
+                    <div className="hidden lg:flex items-center justify-between gap-8">
+                        {/* Left: Logo */}
                         <motion.div
                             className="flex-shrink-0"
                             initial={{ opacity: 0, x: -20 }}
@@ -67,58 +68,61 @@ export default function Header() {
                             </Link>
                         </motion.div>
 
-                        {/* Desktop Navigation */}
-                        <motion.nav
-                            className="hidden lg:flex items-center space-x-1"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.1 }}
-                        >
-                            {navItems.map((item, idx) => (
-                                <motion.div
-                                    key={item.href}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: 0.1 + idx * 0.05 }}
-                                >
-                                    <Link
-                                        href={item.href}
-                                        className="relative px-4 py-2 text-neutral-700 font-medium text-sm tracking-wide group overflow-hidden"
+                        {/* Center: Navigation and Language Switcher */}
+                        <div className="flex items-center justify-center flex-1 gap-8">
+                            {/* Desktop Navigation */}
+                            <motion.nav
+                                className="flex items-center space-x-1"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, delay: 0.1 }}
+                            >
+                                {navItems.map((item, idx) => (
+                                    <motion.div
+                                        key={item.href}
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, delay: 0.1 + idx * 0.05 }}
                                     >
-                                        <span className="relative z-10 transition-colors duration-300 group-hover:text-primary">
-                                            {item.label}
-                                        </span>
-                                        <motion.span
-                                            className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent"
-                                            initial={{ scaleX: 0, transformOrigin: 'left' }}
-                                            whileHover={{ scaleX: 1 }}
-                                            transition={{ duration: 0.3 }}
-                                        />
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </motion.nav>
+                                        <Link
+                                            href={item.href}
+                                            className="relative px-4 py-2 text-neutral-700 font-medium text-sm tracking-wide group overflow-hidden"
+                                        >
+                                            <span className="relative z-10 transition-colors duration-300 group-hover:text-primary">
+                                                {item.label}
+                                            </span>
+                                            <motion.span
+                                                className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent"
+                                                initial={{ scaleX: 0, transformOrigin: 'left' }}
+                                                whileHover={{ scaleX: 1 }}
+                                                transition={{ duration: 0.3 }}
+                                            />
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </motion.nav>
 
-                        {/* Desktop Auth Menu */}
-                        <motion.div
-                            className="hidden lg:flex items-center"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <AuthMenu variant="desktop" />
-                        </motion.div>
+                            {/* Separator Line */}
+                            <div className="h-8 w-px bg-neutral-200 mx-2"></div>
 
-                        {/* Icons & Switcher */}
+                            {/* Language Switcher */}
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <LanguageSwitcher />
+                            </motion.div>
+                        </div>
+
+                        {/* Right: Search, Shop Bag, Cart, Auth Menu */}
                         <motion.div
-                            className="flex items-center gap-2 sm:gap-4 lg:gap-6"
+                            className="flex items-center gap-4 flex-shrink-0"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            {/* Search - Hidden on small mobile, visible on tablet+ */}
+                            {/* Search */}
                             <motion.button
-                                className="hidden sm:flex h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
+                                className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
                                 onClick={() => setSearchOpen(!searchOpen)}
                                 aria-label="Search"
                                 whileHover={{ scale: 1.1 }}
@@ -127,8 +131,8 @@ export default function Header() {
                                 <Search className="h-5 w-5" />
                             </motion.button>
 
-                            {/* Shop Bag - Hidden on mobile */}
-                            <motion.div className="hidden lg:block" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                            {/* Shop Bag */}
+                            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                                 <Link
                                     href={`/${locale}/shop`}
                                     className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
@@ -138,7 +142,7 @@ export default function Header() {
                                 </Link>
                             </motion.div>
 
-                            {/* Cart - Always visible */}
+                            {/* Cart */}
                             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                                 <Link
                                     href={`/${locale}/cart`}
@@ -159,20 +163,78 @@ export default function Header() {
                                 </Link>
                             </motion.div>
 
-                            {/* Separator Line - Hidden on mobile */}
-                            <div className="hidden lg:block h-8 w-px bg-neutral-200 mx-2 sm:mx-3"></div>
-
-                            {/* Language Switcher - Desktop only */}
+                            {/* Desktop Auth Menu */}
                             <motion.div
-                                className="hidden lg:block"
-                                whileHover={{ scale: 1.05 }}
+                                className="flex items-center"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
                             >
-                                <LanguageSwitcher />
+                                <AuthMenu variant="desktop" />
+                            </motion.div>
+                        </motion.div>
+                    </div>
+
+                    {/* Mobile/Tablet Layout */}
+                    <div className="lg:hidden flex items-center justify-between">
+                        {/* Logo */}
+                        <motion.div
+                            className="flex-shrink-0"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <Link href={`/${locale}`} className="flex items-center group">
+                                <div className="relative">
+                                    <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                    <span className="relative text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                                        BuyJan
+                                    </span>
+                                </div>
+                            </Link>
+                        </motion.div>
+
+                        {/* Icons & Switcher */}
+                        <motion.div
+                            className="flex items-center gap-2 sm:gap-4"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            {/* Search */}
+                            <motion.button
+                                className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
+                                onClick={() => setSearchOpen(!searchOpen)}
+                                aria-label="Search"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Search className="h-5 w-5" />
+                            </motion.button>
+
+                            {/* Cart */}
+                            <motion.div className="hidden sm:block" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                                <Link
+                                    href={`/${locale}/cart`}
+                                    className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10 relative"
+                                    aria-label="Cart"
+                                >
+                                    <ShoppingCart className="h-5 w-5" />
+                                    {cartItemsCount > 0 && (
+                                        <motion.span
+                                            className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md border border-white"
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                        >
+                                            {cartItemsCount}
+                                        </motion.span>
+                                    )}
+                                </Link>
                             </motion.div>
 
-                            {/* Language Toggle - Mobile only */}
+                            {/* Language Toggle */}
                             <motion.div
-                                className="lg:hidden"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -186,7 +248,7 @@ export default function Header() {
                             </motion.div>
 
                             {/* Mobile User Menu */}
-                            <div className="lg:hidden relative">
+                            <div className="relative">
                                 <motion.button
                                     onClick={() => setMobileUserMenuOpen(!mobileUserMenuOpen)}
                                     className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10 relative"
@@ -213,13 +275,19 @@ export default function Header() {
                                             transition={{ duration: 0.2 }}
                                             className={cn(
                                                 'fixed top-16 max-h-96 overflow-y-auto w-56 bg-white rounded-xl shadow-xl border border-neutral-200 z-50',
-                                                rtl ? 'right-4' : 'left-4'
+                                                rtl ? 'left-4' : 'right-4'
                                             )}
                                             dir={direction}
+                                            onClick={(e) => {
+                                                if ((e.target as Element).closest('a') || (e.target as Element).closest('button[type="submit"]')) {
+                                                    setMobileUserMenuOpen(false);
+                                                }
+                                            }}
                                         >
                                             <AuthMenu
                                                 variant="mobile"
                                                 className="px-0"
+                                                onLogout={() => setMobileUserMenuOpen(false)}
                                             />
                                         </motion.div>
                                     )}
@@ -240,7 +308,7 @@ export default function Header() {
 
                             {/* Mobile Menu Button */}
                             <motion.button
-                                className="lg:hidden h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
+                                className="h-11 w-11 flex items-center justify-center rounded-full text-neutral-700 hover:text-neutral-900 transition-all duration-300 hover:shadow-md hover:shadow-black/10"
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                                 whileHover={{ scale: 1.1 }}

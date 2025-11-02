@@ -78,6 +78,7 @@ export async function GET(
                 if (itemsResponse.ok) {
                     const itemsData = await itemsResponse.json();
                     orderItems = itemsData.data || [];
+                    console.log('[Orders API] Fetched order items:', orderItems.length);
                 }
             } catch (e) {
                 console.error('[Orders API] Failed to fetch order items:', e);
@@ -89,8 +90,11 @@ export async function GET(
             ...order,
             // Map Directus system fields to expected field names
             created_at: order.date_created,
-            // Attach order items
-            order_items: orderItems.filter((item: any) => item.order === order.id),
+            // Attach order items - handle both string IDs and expanded objects
+            items: orderItems.filter((item: any) => {
+                const itemOrderId = typeof item.order === 'object' && item.order !== null ? item.order.id : item.order;
+                return itemOrderId === order.id;
+            }),
         }));
 
         return NextResponse.json(

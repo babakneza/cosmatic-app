@@ -95,7 +95,7 @@ export function getAssetUrl(
     const url = new URL(`${baseUrl}/assets/${assetId}`);
 
     // Add access token for authentication
-    const directusToken = process.env.DIRECTUS_API_TOKEN || process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN;
+    const directusToken = process.env.NEXT_PUBLIC_DIRECTUS_API_TOKEN || process.env.DIRECTUS_API_TOKEN;
     if (directusToken) {
         url.searchParams.append('access_token', directusToken);
     }

@@ -43,19 +43,19 @@ export default function WishlistPage({ params: paramsPromise }: WishlistPageProp
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-4 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Navigation */}
                 <Link
                     href={`/${params.locale}/account`}
-                    className="inline-flex items-center gap-2 text-gold hover:text-amber-600 mb-8 transition font-medium"
+                    className="inline-flex items-center gap-2 text-gold hover:text-amber-600 mb-4 sm:mb-8 transition font-medium"
                 >
                     <ArrowLeft className="w-5 h-5" />
                     Back to Account
                 </Link>
 
                 {/* Hero Header Section */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gold/20 p-4 sm:p-8 mb-8 relative overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-sm border border-gold/20 p-4 sm:p-8 mb-4 sm:mb-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-rose-100 rounded-full opacity-30 -mr-20 -mt-20"></div>
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-gold/10 rounded-full opacity-30 -ml-16 -mb-16"></div>
 

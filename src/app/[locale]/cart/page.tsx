@@ -19,8 +19,8 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
 
     return (
         <main className={isArabic ? 'rtl' : 'ltr'}>
-            <Container maxWidth="lg" padding="lg" marginTop="md" marginBottom="md">
-                <h1 className={`text-3xl font-bold text-gray-900 mb-8 ${isArabic ? 'text-right' : 'text-left'}`}>
+            <Container maxWidth="lg" padding="lg" marginTop="sm" marginBottom="sm">
+                <h1 className={`text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-8 ${isArabic ? 'text-right' : 'text-left'}`}>
                     {t('cart.shopping_cart')}
                 </h1>
 

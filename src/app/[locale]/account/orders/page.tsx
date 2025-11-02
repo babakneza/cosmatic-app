@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/store/auth';
 import OrdersList from '@/components/account/OrdersList';
 import { ShoppingCart } from 'lucide-react';
@@ -14,6 +15,7 @@ interface OrdersPageProps {
 
 export default function OrdersPage({ params: paramsPromise }: OrdersPageProps) {
     const router = useRouter();
+    const t = useTranslations();
     const { user, is_authenticated, access_token, is_loading, customer_id } = useAuth();
     const [isHydrated, setIsHydrated] = React.useState(false);
     const [locale, setLocale] = React.useState<string>('');
@@ -74,15 +76,15 @@ export default function OrdersPage({ params: paramsPromise }: OrdersPageProps) {
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header Section */}
-                <div className="mb-10">
+                <div className="mb-10 hidden md:block">
                     <div className="bg-gradient-to-r from-gold/10 to-amber-100/10 border border-gold/20 rounded-lg p-8 mb-6">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-16 h-16 bg-gradient-to-br from-gold to-amber-600 rounded-full flex items-center justify-center shadow-lg">
                                 <ShoppingCart className="w-8 h-8 text-white" />
                             </div>
                             <div className="flex-1">
-                                <h1 className="text-4xl font-bold text-gray-900">My Orders</h1>
-                                <p className="text-gray-600 mt-1">Track and manage all your purchases in one place</p>
+                                <h1 className="text-4xl font-bold text-gray-900">{t('orders.my_orders')}</h1>
+                                <p className="text-gray-600 mt-1">{t('orders.track_and_manage')}</p>
                             </div>
                         </div>
                     </div>
@@ -96,7 +98,7 @@ export default function OrdersPage({ params: paramsPromise }: OrdersPageProps) {
                         </div>
                         <div>
                             <p className="text-sm text-blue-800">
-                                <strong>Track Your Orders:</strong> Use the search and filter options below to quickly find your orders. Click on any order to view detailed information including tracking updates.
+                                <strong>{t('orders.tracking_information')}:</strong> {t('orders.help_message')}
                             </p>
                         </div>
                     </div>

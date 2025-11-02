@@ -66,6 +66,7 @@ export interface OrderItem {
     product: string; // Many-to-One → products
     variation?: string; // Many-to-One → product_variations (if exists)
     product_name: string;
+    product_name_ar?: string; // Arabic product name
     variation_name?: string;
     quantity: number;
     unit_price: number; // decimal
