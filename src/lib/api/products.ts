@@ -358,84 +358,25 @@ export async function getProduct(idOrSlug: string) {
 
         console.log('[Products] Fetching product:', idOrSlug);
 
-        // Try by ID first
-        try {
-            const product = await (client as any).request((readItem as any)('products', idOrSlug, { fields }));
-            console.log('[Products] Found product by ID:', product?.id);
-            console.log('[Products] Product raw data:', JSON.stringify({
-                id: product.id,
-                name: product.name,
-                images: product.images,
-                main_image: product.main_image,
-            }, null, 2));
+        // Determine if it's a UUID or numeric ID
+        const isUUID = idOrSlug.includes('-') && idOrSlug.length > 20;
+        const isNumericId = /^\d+$/.test(idOrSlug);
 
-            // Process main image
-            let mainImageUrl = '/images/placeholder-product.jpg';
-            if (product.main_image) {
-                const processedImage = processDirectusImage(directusUrl, product.main_image);
-                if (processedImage) {
-                    mainImageUrl = processedImage.url;
-                }
+        let product = null;
+
+        // Try by ID first (if it looks like an ID)
+        if (isUUID || isNumericId) {
+            try {
+                product = await (client as any).request((readItem as any)('products', idOrSlug, { fields }));
+                console.log('[Products] Found product by ID:', product?.id);
+            } catch (idError) {
+                console.log('[Products] Could not find by ID, trying by slug:', idOrSlug);
             }
-            product.mainImageUrl = mainImageUrl;
-            product.image = mainImageUrl;
+        }
 
-            // Process images array and image_gallery - combine into single array with main_image first
-            let processedImages: any[] = [];
-            
-            // Start with main_image
-            if (mainImageUrl && mainImageUrl !== '/images/placeholder-product.jpg') {
-                processedImages.push({
-                    id: 'main_image',
-                    url: mainImageUrl
-                });
-            }
-            
-            // Add image_gallery images
-            if (product.image_gallery && Array.isArray(product.image_gallery) && product.image_gallery.length > 0) {
-                console.log('[Products] Processing', product.image_gallery.length, 'gallery images for product', product.id);
-                const galleryImages = product.image_gallery
-                    .map((img: any) => {
-                        const processed = processDirectusImage(directusUrl, img);
-                        return processed ? { id: processed.id, url: processed.url } : null;
-                    })
-                    .filter((img: any) => img !== null);
-                processedImages.push(...galleryImages);
-                console.log('[Products] Processed', galleryImages.length, 'gallery images successfully');
-            }
-            
-            // Fallback to legacy images field if no image_gallery
-            if (processedImages.length === 0 && product.images && Array.isArray(product.images) && product.images.length > 0) {
-                console.log('[Products] Processing', product.images.length, 'legacy images for product', product.id);
-                processedImages = product.images
-                    .map((img: any) => {
-                        const processed = processDirectusImage(directusUrl, img);
-                        return processed ? { id: processed.id, url: processed.url } : null;
-                    })
-                    .filter((img: any) => img !== null);
-                console.log('[Products] Processed', processedImages.length, 'legacy images successfully');
-            }
-            
-            if (processedImages.length === 0) {
-                console.log('[Products] No images to process for product', product.id);
-            }
-            
-            product.processedImages = processedImages.length > 0 ? processedImages : undefined;
-            product.images = processedImages.length > 0 ? processedImages : product.images || [];
-
-            // Calculate rating from product_reviews and fetch full review list
-            const ratingData = calculateAverageRating(product.product_reviews);
-            product.rating = ratingData.average;
-            product.rating_count = ratingData.count;
-
-            const reviews = await getProductReviews(product.id);
-            product.reviews = reviews;
-
-            return { data: product };
-        } catch (idError) {
-            console.log('[Products] Could not find by ID, trying by slug:', idOrSlug);
-
-            // Try by slug
+        // If not found by ID, try by slug
+        if (!product) {
+            console.log('[Products] Trying to fetch product by slug:', idOrSlug);
             const products = await (client as any).request((readItems as any)('products', {
                 filter: { slug: { _eq: idOrSlug } },
                 fields,
@@ -443,74 +384,87 @@ export async function getProduct(idOrSlug: string) {
             }));
 
             if (products && products.length > 0) {
-                const product = products[0];
+                product = products[0];
                 console.log('[Products] Found product by slug:', product?.id);
-                console.log('[Products] Product raw data (by slug):', JSON.stringify({
-                    id: product.id,
-                    name: product.name,
-                    images: product.images,
-                    main_image: product.main_image,
-                }, null, 2));
-
-                // Process main image
-                let mainImageUrl = '/images/placeholder-product.jpg';
-                if (product.main_image) {
-                    const processedImage = processDirectusImage(directusUrl, product.main_image);
-                    if (processedImage) {
-                        mainImageUrl = processedImage.url;
-                    }
-                }
-                product.mainImageUrl = mainImageUrl;
-                product.image = mainImageUrl;
-
-                // Process images array and image_gallery - combine into single array with main_image first
-                let processedImages: any[] = [];
-                
-                // Start with main_image
-                if (mainImageUrl && mainImageUrl !== '/images/placeholder-product.jpg') {
-                    processedImages.push({
-                        id: 'main_image',
-                        url: mainImageUrl
-                    });
-                }
-                
-                // Add image_gallery images
-                if (product.image_gallery && Array.isArray(product.image_gallery) && product.image_gallery.length > 0) {
-                    const galleryImages = product.image_gallery
-                        .map((img: any) => {
-                            const processed = processDirectusImage(directusUrl, img);
-                            return processed ? { id: processed.id, url: processed.url } : null;
-                        })
-                        .filter((img: any) => img !== null);
-                    processedImages.push(...galleryImages);
-                }
-                
-                // Fallback to legacy images field if no image_gallery
-                if (processedImages.length === 0 && product.images && Array.isArray(product.images) && product.images.length > 0) {
-                    processedImages = product.images
-                        .map((img: any) => {
-                            const processed = processDirectusImage(directusUrl, img);
-                            return processed ? { id: processed.id, url: processed.url } : null;
-                        })
-                        .filter((img: any) => img !== null);
-                }
-                
-                product.processedImages = processedImages.length > 0 ? processedImages : undefined;
-                product.images = processedImages.length > 0 ? processedImages : product.images || [];
-
-                // Calculate rating from product_reviews and fetch full review list
-                const ratingData = calculateAverageRating(product.product_reviews);
-                product.rating = ratingData.average;
-                product.rating_count = ratingData.count;
-
-                const reviews = await getProductReviews(product.id);
-                product.reviews = reviews;
-
-                return { data: product };
+            } else {
+                throw new Error(`Product not found: ${idOrSlug}`);
             }
+        }
 
+        if (!product) {
             throw new Error(`Product not found: ${idOrSlug}`);
         }
+
+        console.log('[Products] Product raw data:', JSON.stringify({
+            id: product.id,
+            name: product.name,
+            images: product.images,
+            main_image: product.main_image,
+        }, null, 2));
+
+        // Process main image
+        let mainImageUrl = '/images/placeholder-product.jpg';
+        if (product.main_image) {
+            const processedImage = processDirectusImage(directusUrl, product.main_image);
+            if (processedImage) {
+                mainImageUrl = processedImage.url;
+            }
+        }
+        product.mainImageUrl = mainImageUrl;
+        product.image = mainImageUrl;
+
+        // Process images array and image_gallery - combine into single array with main_image first
+        let processedImages: any[] = [];
+        
+        // Start with main_image
+        if (mainImageUrl && mainImageUrl !== '/images/placeholder-product.jpg') {
+            processedImages.push({
+                id: 'main_image',
+                url: mainImageUrl
+            });
+        }
+        
+        // Add image_gallery images
+        if (product.image_gallery && Array.isArray(product.image_gallery) && product.image_gallery.length > 0) {
+            console.log('[Products] Processing', product.image_gallery.length, 'gallery images for product', product.id);
+            const galleryImages = product.image_gallery
+                .map((img: any) => {
+                    const processed = processDirectusImage(directusUrl, img);
+                    return processed ? { id: processed.id, url: processed.url } : null;
+                })
+                .filter((img: any) => img !== null);
+            processedImages.push(...galleryImages);
+            console.log('[Products] Processed', galleryImages.length, 'gallery images successfully');
+        }
+        
+        // Fallback to legacy images field if no image_gallery
+        if (processedImages.length === 0 && product.images && Array.isArray(product.images) && product.images.length > 0) {
+            console.log('[Products] Processing', product.images.length, 'legacy images for product', product.id);
+            processedImages = product.images
+                .map((img: any) => {
+                    const processed = processDirectusImage(directusUrl, img);
+                    return processed ? { id: processed.id, url: processed.url } : null;
+                })
+                .filter((img: any) => img !== null);
+            console.log('[Products] Processed', processedImages.length, 'legacy images successfully');
+        }
+        
+        if (processedImages.length === 0) {
+            console.log('[Products] No images to process for product', product.id);
+        }
+        
+        product.processedImages = processedImages.length > 0 ? processedImages : undefined;
+        product.images = processedImages.length > 0 ? processedImages : product.images || [];
+
+        // Calculate rating from product_reviews and fetch full review list
+        const ratingData = calculateAverageRating(product.product_reviews);
+        product.rating = ratingData.average;
+        product.rating_count = ratingData.count;
+
+        const reviews = await getProductReviews(product.id);
+        product.reviews = reviews;
+
+        return { data: product };
     } catch (error) {
         console.error('[Products] Error fetching product:', error instanceof Error ? error.message : JSON.stringify(error));
         if (error instanceof Error && error.stack) {

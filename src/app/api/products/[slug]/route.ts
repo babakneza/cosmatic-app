@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getProduct } from '@/lib/api/directus';
+import { getProduct } from '@/lib/api/products';
 import { Locale } from '@/types';
 
 export async function GET(
@@ -40,8 +40,12 @@ export async function GET(
         }
 
         // Use the getProduct function which handles both IDs and slugs
+        console.log(`[API] Calling getProduct with slug: ${slug}`);
         const result = await getProduct(slug);
+        console.log(`[API] getProduct result:`, result ? 'Received result' : 'No result');
         const product = result?.data || result;
+
+        console.log(`[API] Product data:`, product ? `Received ${typeof product === 'object' ? 'object' : typeof product}` : 'No product');
 
         // If product not found
         if (!product) {
@@ -139,6 +143,8 @@ export async function GET(
         return NextResponse.json(finalProduct);
     } catch (error) {
         console.error('[API] Error fetching product:', error);
+        console.error('[API] Error type:', error instanceof Error ? 'Error' : typeof error);
+        console.error('[API] Full error object:', JSON.stringify(error, null, 2));
 
         // More detailed error response
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -165,6 +171,14 @@ export async function GET(
         // Log the full error response for debugging
         console.error('[API] Error response:', JSON.stringify(errorResponse, null, 2));
 
-        return NextResponse.json(errorResponse, { status: 500 });
+        try {
+            return NextResponse.json(errorResponse, { status: 500 });
+        } catch (jsonError) {
+            console.error('[API] Error creating JSON response:', jsonError);
+            return new NextResponse(JSON.stringify(errorResponse), { 
+                status: 500,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
     }
 }

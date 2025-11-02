@@ -197,196 +197,128 @@ export default function AddressList({
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-3">
             {addresses.length === 0 ? (
-                <div className="text-center py-16 px-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
-                    <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <MapPin className="w-8 h-8 text-gold" />
+                <div className="text-center py-12 px-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-dashed border-gray-300">
+                    <div className="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <MapPin className="w-6 h-6 text-gold" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">No Addresses Yet</h3>
-                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                        Create your first address to enable faster checkout and delivery.
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">No Addresses Yet</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Create your first address to enable faster checkout.
                     </p>
                     <Link
                         href={`/${locale}/account/addresses/add`}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-white rounded-lg transition font-semibold shadow-md hover:shadow-lg"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-white rounded-lg transition font-semibold shadow-md hover:shadow-lg text-sm"
                     >
                         <span>+</span>
-                        Add Your First Address
+                        Add Address
                     </Link>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     {addresses.map((address) => (
                         <div
                             key={address.id}
-                            className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow border border-gray-100 overflow-hidden group"
+                            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden"
                         >
-                            {/* Card Header with Default Badges */}
-                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200 flex items-start justify-between">
-                                <div className="flex items-start gap-3 flex-1">
-                                    <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                        <MapPin className="w-5 h-5 text-gold" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-gray-900 text-lg">
-                                            {address.first_name} {address.last_name}
-                                        </h3>
-                                        {address.city && (
-                                            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                                <Building2 className="w-3 h-3" />
-                                                {address.city}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Badges */}
-                                <div className="flex flex-wrap gap-2 justify-end">
-                                    {address.isDefaultShipping && (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                                            <Star className="w-3 h-3 fill-current" />
-                                            Shipping
-                                        </span>
-                                    )}
-                                    {address.isDefaultBilling && (
-                                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
-                                            <Star className="w-3 h-3 fill-current" />
-                                            Billing
-                                        </span>
-                                    )}
-                                </div>
+                            {/* Card Header - Compact */}
+                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-2 border-b border-gray-200">
+                                <h3 className="font-bold text-gray-900 text-base">
+                                    {address.first_name} {address.last_name}
+                                </h3>
+                                {address.city && (
+                                    <p className="text-xs text-gray-500 mt-0.5">
+                                        <Building2 className="w-3 h-3 inline mr-1" />
+                                        {address.city}
+                                    </p>
+                                )}
                             </div>
 
-                            {/* Address Details */}
-                            <div className="px-6 py-5 space-y-3">
-                                {/* Street Address */}
+                            {/* Address Details - Minimal */}
+                            <div className="px-4 py-3 space-y-2">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500 mb-1">Address</p>
-                                    <p className="text-gray-900 font-medium">{address.address_line_1}</p>
+                                    <p className="text-xs font-medium text-gray-900">{address.address_line_1}</p>
                                     {address.address_line_2 && (
-                                        <p className="text-sm text-gray-600">
-                                            {address.address_line_2}
-                                        </p>
-                                    )}
-                                    {address.company && (
-                                        <p className="text-sm text-gray-600">
-                                            {address.company}
-                                        </p>
+                                        <p className="text-xs text-gray-600">{address.address_line_2}</p>
                                     )}
                                 </div>
 
-                                {/* Location Details */}
-                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                <div className="grid grid-cols-2 gap-3 text-xs">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 mb-1">
-                                            City
-                                        </p>
+                                        <p className="text-gray-500">City</p>
                                         <p className="text-gray-900 font-medium">{address.city}</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500 mb-1">State</p>
-                                        <p className="text-gray-900 font-medium">{address.state || '-'}</p>
-                                    </div>
-                                </div>
-
-                                {/* Postal Code and Country */}
-                                <div className="grid grid-cols-2 gap-4 pt-2">
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500 mb-1">
-                                            Postal Code
-                                        </p>
+                                        <p className="text-gray-500">Postal</p>
                                         <p className="text-gray-900 font-medium">{address.postal_code}</p>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500 mb-1">Country</p>
-                                        <p className="text-gray-900 font-medium">
-                                            {(() => {
-                                                const countryValue = address.countries || address.country;
-
-                                                // If it's an expanded object with 'countries' property
-                                                if (typeof countryValue === 'object' && countryValue !== null && 'countries' in countryValue) {
-                                                    const countryObj = countryValue as any;
-                                                    return countryObj.countries;
-                                                }
-
-                                                // If it's a number or string number, look up the country name
-                                                if (typeof countryValue === 'number' || (typeof countryValue === 'string' && /^\d+$/.test(countryValue))) {
-                                                    const countryId = countryValue;
-                                                    const countryName = countryNames[countryId];
-                                                    if (countryName) {
-                                                        return countryName;
-                                                    }
-                                                }
-
-                                                // Fallback to the raw value
-                                                return String(countryValue) || '-';
-                                            })()}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Address Type */}
-                                <div className="pt-2">
-                                    <p className="text-sm font-medium text-gray-500 mb-1">Type</p>
-                                    <p className="text-gray-900 font-medium capitalize">{address.type}</p>
                                 </div>
                             </div>
 
-                            {/* Set As Default Section */}
-                            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 space-y-2">
+                            {/* Address Type Boxes - Horizontal Layout */}
+                            <div className="px-4 py-2 border-t border-gray-200 grid grid-cols-3 gap-2">
+                                {/* Shipping Box */}
                                 <button
                                     onClick={() => handleSetDefaultShipping(address.id)}
                                     disabled={settingDefault[`ship-${address.id}`]}
-                                    className={`w-full px-4 py-2 rounded-lg transition font-medium text-sm flex items-center justify-center gap-2 ${address.isDefaultShipping
-                                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
+                                    className={`px-2 py-2 rounded-lg transition text-center text-xs ${
+                                        address.isDefaultShipping
+                                            ? 'bg-blue-500 text-white hover:bg-blue-600'
+                                            : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                                    }`}
+                                    title="Set as Shipping Address"
                                 >
-                                    {address.isDefaultShipping && (
-                                        <CheckCircle className="w-4 h-4" />
-                                    )}
-                                    {settingDefault[`ship-${address.id}`]
-                                        ? 'Setting...'
-                                        : address.isDefaultShipping
-                                            ? 'Default Shipping Address'
-                                            : 'Set as Shipping Address'}
+                                    <div className="font-bold text-xs">📦</div>
+                                    <div className="font-semibold leading-tight">Shipping</div>
+                                    <div className="text-xs opacity-90 leading-tight">Delivery</div>
                                 </button>
 
+                                {/* Billing Box */}
                                 <button
                                     onClick={() => handleSetDefaultBilling(address.id)}
                                     disabled={settingDefault[`bill-${address.id}`]}
-                                    className={`w-full px-4 py-2 rounded-lg transition font-medium text-sm flex items-center justify-center gap-2 ${address.isDefaultBilling
-                                        ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
+                                    className={`px-2 py-2 rounded-lg transition text-center text-xs ${
+                                        address.isDefaultBilling
+                                            ? 'bg-purple-500 text-white hover:bg-purple-600'
+                                            : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
+                                    }`}
+                                    title="Set as Billing Address"
                                 >
-                                    {address.isDefaultBilling && (
-                                        <CheckCircle className="w-4 h-4" />
-                                    )}
-                                    {settingDefault[`bill-${address.id}`]
-                                        ? 'Setting...'
-                                        : address.isDefaultBilling
-                                            ? 'Default Billing Address'
-                                            : 'Set as Billing Address'}
+                                    <div className="font-bold text-xs">💳</div>
+                                    <div className="font-semibold leading-tight">Billing</div>
+                                    <div className="text-xs opacity-90 leading-tight">Invoice</div>
                                 </button>
+
+                                {/* Default Box */}
+                                <div
+                                    className={`px-2 py-2 rounded-lg text-center text-xs ${
+                                        (address.isDefaultShipping || address.isDefaultBilling)
+                                            ? 'bg-green-500 text-white'
+                                            : 'bg-gray-100 text-gray-600 border border-gray-300'
+                                    }`}
+                                >
+                                    <div className="font-bold text-xs">✓</div>
+                                    <div className="font-semibold leading-tight">Default</div>
+                                    <div className="text-xs opacity-90 leading-tight">Primary</div>
+                                </div>
                             </div>
 
-                            {/* Actions Footer */}
-                            <div className="px-6 py-4 border-t border-gray-200 flex gap-3 bg-white">
+                            {/* Actions Footer - Compact */}
+                            <div className="px-4 py-2 border-t border-gray-200 flex gap-2 bg-white">
                                 <Link
                                     href={`/${locale}/account/addresses/${address.id}/edit`}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition"
+                                    className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded text-xs transition"
                                 >
-                                    <Edit className="w-4 h-4" />
+                                    <Edit className="w-3 h-3" />
                                     Edit
                                 </Link>
                                 <button
                                     onClick={() => handleDelete(address.id)}
                                     disabled={deleteLoading[address.id]}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded text-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <Trash2 className="w-3 h-3" />
                                     Delete
                                 </button>
                             </div>

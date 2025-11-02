@@ -9,6 +9,9 @@ export async function GET(
     request: NextRequest,
     context: { params: Promise<{ userId: string }> }
 ) {
+    const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
+    const adminToken = process.env.DIRECTUS_API_TOKEN;
+
     try {
         const { userId } = await context.params;
 
@@ -34,9 +37,6 @@ export async function GET(
                 { status: 401 }
             );
         }
-
-        const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://admin.buyjan.com';
-        const adminToken = process.env.DIRECTUS_API_TOKEN;
 
         if (!adminToken) {
             console.error('[Customers API] Missing DIRECTUS_API_TOKEN');
@@ -77,6 +77,12 @@ export async function GET(
         );
     } catch (error: any) {
         console.error('[Customers API] Failed to fetch customer by user ID:', error.message);
+        console.error('[Customers API] Error details:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            message: error.message,
+            hasToken: !!adminToken
+        });
 
         // Check for permission errors
         if (error.response?.status === 403) {
@@ -87,7 +93,7 @@ export async function GET(
         }
 
         return NextResponse.json(
-            { error: 'Failed to fetch customer profile' },
+            { error: 'Failed to fetch customer profile', details: error.message },
             { status: 500 }
         );
     }

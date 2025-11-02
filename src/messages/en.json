@@ -13,6 +13,7 @@
         "best_sellers": "Best Sellers",
         "featured": "Featured",
         "sale": "Sale",
+        "off": "off",
         "loading": "Loading...",
         "error": "Error",
         "try_again": "Try Again",

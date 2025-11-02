@@ -4,9 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Filter, X, SlidersHorizontal } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { Product, Category, Brand, Locale, ProductFilters, SortOption } from '@/types';
-import { LuxuryProductGrid } from '@/components/luxury';
+import { InstagramProductCard } from '@/components/product';
+import { useCartStore } from '@/store/cart';
 import { cn, isRTL, getFontFamily, getLocalizedValue } from '@/lib/utils';
 import { getAssetUrl } from '@/lib/api/directus-config';
 import CategoryFilterSidebar from './CategoryFilterSidebar';
@@ -43,9 +45,20 @@ export default function CategoryContent({
     const searchParams = useSearchParams();
     const rtl = isRTL(locale);
     const fontFamily = getFontFamily(locale);
+    const { addItem } = useCartStore();
 
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
     const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+    // Handle add to cart
+    const handleAddToCart = useCallback((product: Product) => {
+        addItem(product, 1);
+    }, [addItem]);
+
+    // Handle add to wishlist (placeholder)
+    const handleAddToWishlist = useCallback((product: Product) => {
+        console.log('Added to wishlist:', product.id);
+    }, []);
 
     // Helper function to convert string or array to array
     const toArray = (value: string | string[] | undefined): string[] => {
@@ -408,19 +421,34 @@ export default function CategoryContent({
                             </div>
                         )}
 
-                        {/* Products */}
+                        {/* Products - Instagram Style Grid */}
                         {products.length > 0 ? (
                             <>
-                                <LuxuryProductGrid
-                                    products={products}
-                                    locale={locale}
-                                    columns={{ mobile: 2, tablet: 3, desktop: 3 }}
-                                    gap="medium"
-                                />
+                                <motion.div
+                                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ staggerChildren: 0.1, delayChildren: 0.1 }}
+                                >
+                                    {products.map((product) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <InstagramProductCard
+                                                product={product}
+                                                onAddToCart={handleAddToCart}
+                                                onAddToWishlist={handleAddToWishlist}
+                                            />
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
 
                                 {/* Pagination */}
                                 {pagination.totalPages > 1 && (
-                                    <div className="mt-12">
+                                    <div className="mt-8">
                                         <Pagination
                                             currentPage={pagination.currentPage}
                                             totalPages={pagination.totalPages}
