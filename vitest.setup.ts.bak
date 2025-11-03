@@ -1,0 +1,115 @@
+/**
+ * Vitest setup file
+ * 
+ * This file runs before all tests and sets up the global test environment.
+ * 
+ * Includes:
+ * - Testing library matchers (toBeInTheDocument, etc.)
+ * - Global test utilities
+ * - Mock setup
+ * - Environment variable configuration for tests
+ */
+
+import '@testing-library/jest-dom';
+import { expect, afterEach, vi } from 'vitest';
+
+/**
+ * Mock environment variables for tests
+ * These values are used as fallbacks in tests
+ */
+Object.defineProperty(process.env, 'NEXT_PUBLIC_DIRECTUS_URL', {
+    value: 'https://test.directus.app',
+});
+Object.defineProperty(process.env, 'NEXT_PUBLIC_SITE_URL', {
+    value: 'https://test.buyjan.com',
+});
+Object.defineProperty(process.env, 'NODE_ENV', {
+    value: 'test',
+});
+
+/**
+ * Mock next/image to avoid issues with Image component in tests
+ */
+vi.mock('next/image', () => ({
+    default: ({
+        src,
+        alt,
+        width,
+        height,
+        priority,
+        ...props
+    }: any) => {
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return {
+            $$typeof: Symbol.for('react.element'),
+            type: 'img',
+            props: {
+                src,
+                alt,
+                width,
+                height,
+                ...props,
+            },
+        };
+    },
+}));
+
+/**
+ * Mock next/router for tests that need routing
+ */
+vi.mock('next/router', () => ({
+    useRouter: () => ({
+        push: vi.fn(),
+        pathname: '/',
+        query: {},
+        asPath: '/',
+        replace: vi.fn(),
+        reload: vi.fn(),
+        back: vi.fn(),
+        prefetch: vi.fn(),
+        beforePopState: vi.fn(),
+        events: {
+            on: vi.fn(),
+            off: vi.fn(),
+            emit: vi.fn(),
+        },
+    }),
+}));
+
+/**
+ * Mock next/navigation for App Router tests
+ */
+vi.mock('next/navigation', () => ({
+    useRouter: () => ({
+        push: vi.fn(),
+        replace: vi.fn(),
+        prefetch: vi.fn(),
+        back: vi.fn(),
+    }),
+    usePathname: () => '/',
+    useSearchParams: () => new URLSearchParams(),
+}));
+
+/**
+ * Global test utilities
+ */
+declare global {
+    namespace Vi {
+        interface Matchers<R> {
+            toBeInTheDocument(): R;
+            toBeVisible(): R;
+            toBeDisabled(): R;
+            toBeEnabled(): R;
+            toHaveTextContent(text: string): R;
+            toHaveClass(className: string): R;
+            toHaveAttribute(attr: string, value?: string): R;
+        }
+    }
+}
+
+/**
+ * Cleanup after each test
+ */
+afterEach(() => {
+    vi.clearAllMocks();
+});

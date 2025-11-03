@@ -1,0 +1,176 @@
+
+> cosmatic-app-oman@0.1.0 build
+> next build
+
+   Γû▓ Next.js 16.0.1 (Turbopack)
+   - Environments: .env.production.local, .env.local
+
+ ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 105s
+   Running TypeScript ...
+   Collecting page data ...
+   Generating static pages (0/91) ...
+   Generating static pages (22/91) 
+Error: MISSING_MESSAGE: checkout.payment_cancelled (ar)
+    at Module.f (C:\projects\cosmatic_app_directus\.next\server\chunks\ssr\[root-of-the-server]__3e4fdd24._.js:1:7006) {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'checkout.payment_cancelled (ar)'
+}
+Error: MISSING_MESSAGE: checkout.payment_cancelled (en)
+    at Module.f (C:\projects\cosmatic_app_directus\.next\server\chunks\ssr\[root-of-the-server]__3e4fdd24._.js:1:7006) {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'checkout.payment_cancelled (en)'
+}
+   Generating static pages (45/91) 
+Error: MISSING_MESSAGE: checkout.payment_successful (en)
+    at Module.f (C:\projects\cosmatic_app_directus\.next\server\chunks\ssr\[root-of-the-server]__b9425044._.js:1:7020) {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'checkout.payment_successful (en)'
+}
+Error: MISSING_MESSAGE: checkout.payment_successful (ar)
+    at Module.f (C:\projects\cosmatic_app_directus\.next\server\chunks\ssr\[root-of-the-server]__b9425044._.js:1:7020) {
+  code: 'MISSING_MESSAGE',
+  originalMessage: 'checkout.payment_successful (ar)'
+}
+   Generating static pages (68/91) 
+[Products] Error fetching best sellers: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cin_stock&limit=20"}}
+[Products] Error fetching featured products: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cin_stock%2Cis_featured&filter=%7B%22is_featured%22%3A%7B%22_eq%22%3Atrue%7D%7D&limit=8"}}
+[Products] Error fetching new arrivals: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cis_new_arrival%2Cnew_until&filter=%7B%22_or%22%3A%5B%7B%22is_new_arrival%22%3A%7B%22_eq%22%3Atrue%7D%7D%2C%7B%22new_until%22%3A%7B%22_gte%22%3A%222025-11-03T13%3A36%3A27.657Z%22%7D%7D%5D%7D&limit=8"}}
+[Categories] Error fetching featured categories with SDK: {
+  message: 'Invalid user credentials.',
+  errors: [ { message: 'Invalid user credentials.', extensions: [Object] } ],
+  response: Response {
+    status: 401,
+    statusText: 'Unauthorized',
+    headers: Headers {
+      server: 'nginx/1.24.0 (Ubuntu)',
+      date: 'Mon, 03 Nov 2025 13:36:27 GMT',
+      'content-type': 'application/json; charset=utf-8',
+      'content-length': '96',
+      connection: 'keep-alive',
+      'content-security-policy': "script-src 'self' 'unsafe-eval';worker-src 'self' blob:;child-src 'self' blob:;img-src 'self' data: blob: https://raw.githubusercontent.com https://avatars.githubusercontent.com;media-src 'self';connect-src 'self' https://* wss://*;default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline'",
+      'x-powered-by': 'Directus',
+      etag: 'W/"60-SpvBqFAbsdy4SkXwsevzfPClFZA"'
+    },
+    body: ReadableStream { locked: true, state: 'closed', supportsBYOB: true },
+    bodyUsed: true,
+    ok: false,
+    redirected: false,
+    type: 'default',
+    url: 'https://admin.buyjan.com/items/categiries?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cimage%2Cicon%2Cparent&limit=6'
+  }
+}
+[Products] Error fetching featured products: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cin_stock%2Cis_featured&filter=%7B%22is_featured%22%3A%7B%22_eq%22%3Atrue%7D%7D&limit=8"}}
+[Products] Error fetching best sellers: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cin_stock&limit=20"}}
+[Products] Error fetching new arrivals: {"message":"Invalid user credentials.","errors":[{"message":"Invalid user credentials.","extensions":{"code":"INVALID_CREDENTIALS"}}],"response":{"url":"https://admin.buyjan.com/items/products?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cprice%2Csale_price%2Cmain_image%2Ccategory.id%2Ccategory.name%2Ccategory.slug%2Cbrand.id%2Cbrand.name%2Cbrand.slug%2Cimage_gallery%2Cis_new_arrival%2Cnew_until&filter=%7B%22_or%22%3A%5B%7B%22is_new_arrival%22%3A%7B%22_eq%22%3Atrue%7D%7D%2C%7B%22new_until%22%3A%7B%22_gte%22%3A%222025-11-03T13%3A36%3A34.275Z%22%7D%7D%5D%7D&limit=8"}}
+[Categories] Error fetching featured categories with SDK: {
+  message: 'Invalid user credentials.',
+  errors: [ { message: 'Invalid user credentials.', extensions: [Object] } ],
+  response: Response {
+    status: 401,
+    statusText: 'Unauthorized',
+    headers: Headers {
+      server: 'nginx/1.24.0 (Ubuntu)',
+      date: 'Mon, 03 Nov 2025 13:36:33 GMT',
+      'content-type': 'application/json; charset=utf-8',
+      'content-length': '96',
+      connection: 'keep-alive',
+      'content-security-policy': "script-src 'self' 'unsafe-eval';worker-src 'self' blob:;child-src 'self' blob:;img-src 'self' data: blob: https://raw.githubusercontent.com https://avatars.githubusercontent.com;media-src 'self';connect-src 'self' https://* wss://*;default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';object-src 'none';script-src-attr 'none';style-src 'self' https: 'unsafe-inline'",
+      'x-powered-by': 'Directus',
+      etag: 'W/"60-SpvBqFAbsdy4SkXwsevzfPClFZA"'
+    },
+    body: ReadableStream { locked: true, state: 'closed', supportsBYOB: true },
+    bodyUsed: true,
+    ok: false,
+    redirected: false,
+    type: 'default',
+    url: 'https://admin.buyjan.com/items/categiries?fields=id%2Cname%2Cname_ar%2Cslug%2Cdescription%2Cdescription_ar%2Cimage%2Cicon%2Cparent&limit=6'
+  }
+}
+ Γ£ô Generating static pages (91/91) in 19.5s
+   Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /_not-found
+Γö£ ╞Æ /[locale]
+Γö£ ╞Æ /[locale]/about
+Γö£ ╞Æ /[locale]/account
+Γö£ ╞Æ /[locale]/account/addresses
+Γö£ ╞Æ /[locale]/account/addresses/[id]/edit
+Γö£ ╞Æ /[locale]/account/addresses/add
+Γö£ ╞Æ /[locale]/account/change-password
+Γö£ ╞Æ /[locale]/account/orders
+Γö£ ╞Æ /[locale]/account/orders/[id]
+Γö£ ╞Æ /[locale]/account/settings
+Γö£ ╞Æ /[locale]/account/wishlist
+Γö£ ╞Æ /[locale]/auth-test
+Γö£ ╞Æ /[locale]/auth/forgot-password
+Γö£ ╞Æ /[locale]/auth/login
+Γö£ ╞Æ /[locale]/auth/register
+Γö£ ╞Æ /[locale]/auth/reset-password
+Γö£ ╞Æ /[locale]/cart
+Γö£ ╞Æ /[locale]/categories/[slug]
+Γö£ ╞Æ /[locale]/checkout
+Γö£ ╞Æ /[locale]/checkout/confirmation
+Γö£ ╞Æ /[locale]/checkout/payment-cancel
+Γö£ ╞Æ /[locale]/checkout/payment-success
+Γö£ ╞Æ /[locale]/contact
+Γö£ ╞Æ /[locale]/cookies
+Γö£ ╞Æ /[locale]/debug
+Γö£ ╞Æ /[locale]/faq
+Γö£ ╞Æ /[locale]/privacy
+Γö£ ╞Æ /[locale]/products/[slug]
+Γö£ ╞Æ /[locale]/returns-exchanges
+Γö£ ╞Æ /[locale]/search
+Γö£ ╞Æ /[locale]/shipping
+Γö£ ╞Æ /[locale]/shop
+Γö£ ╞Æ /[locale]/terms
+Γö£ ╞Æ /[locale]/test-product
+Γö£ ╞Æ /[locale]/warranty
+Γö£ ╞Æ /api/addresses/[addressId]
+Γö£ ╞Æ /api/auth/login
+Γö£ ╞Æ /api/auth/logout
+Γö£ ╞Æ /api/auth/me
+Γö£ ╞Æ /api/auth/refresh
+Γö£ ╞Æ /api/auth/register
+Γö£ ╞Æ /api/auth/test-refresh-token
+Γö£ ╞Æ /api/categories
+Γö£ ╞Æ /api/check-schema
+Γö£ ╞Æ /api/contact
+Γö£ ╞Æ /api/countries
+Γö£ ╞Æ /api/countries/[countryId]
+Γö£ ╞Æ /api/customers
+Γö£ ╞Æ /api/customers/[customerId]
+Γö£ ╞Æ /api/customers/[customerId]/addresses
+Γö£ ╞Æ /api/customers/[customerId]/orders
+Γö£ ╞Æ /api/customers/by-user/[userId]
+Γö£ ╞Æ /api/debug-categories
+Γö£ ╞Æ /api/debug-images
+Γö£ ╞Æ /api/mock-product
+Γö£ ╞Æ /api/orders
+Γö£ ╞Æ /api/orders/[orderId]
+Γö£ ╞Æ /api/orders/[orderId]/items
+Γö£ ╞Æ /api/payments/paypal/capture-order
+Γö£ ╞Æ /api/payments/paypal/create-order
+Γö£ ╞Æ /api/products
+Γö£ ╞Æ /api/products/[slug]
+Γö£ ╞Æ /api/reviews
+Γö£ ╞Æ /api/reviews/[reviewId]
+Γö£ ╞Æ /api/reviews/[reviewId]/helpful
+Γö£ ╞Æ /api/search
+Γö£ ╞Æ /api/search/popular
+Γö£ ╞Æ /api/shipping
+Γö£ ╞Æ /api/test-categories
+Γö£ ╞Æ /api/test-directus-connection
+Γö£ ╞Æ /api/users/update-profile
+Γö£ ╞Æ /api/webhooks/paypal
+Γö£ ╞Æ /api/wishlist
+Γöö ╞Æ /api/wishlist/[id]
+
+
+╞Æ Proxy (Middleware)
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

@@ -109,7 +109,12 @@ export const useAuth = create<AuthStore>()(
                                 set({ customer_id: customer.id, customer_profile: customer });
                             }
                         } catch (customerError: any) {
-                            // Don't throw error - customer profile creation is non-critical
+                            // Log the error for debugging
+                            console.warn('[Auth] Customer profile operation failed:', {
+                                message: customerError?.message,
+                                status: customerError?.response?.status,
+                                data: customerError?.response?.data,
+                            });
                         }
                     }
 
@@ -164,7 +169,12 @@ export const useAuth = create<AuthStore>()(
                                 set({ customer_id: customer.id, customer_profile: customer });
                             }
                         } catch (customerError: any) {
-                            // Don't throw error - customer profile creation is non-critical
+                            // Log the error for debugging
+                            console.warn('[Auth] Customer profile creation failed during registration:', {
+                                message: customerError?.message,
+                                status: customerError?.response?.status,
+                                data: customerError?.response?.data,
+                            });
                         }
                     }
 

@@ -42,6 +42,7 @@ export function useCheckoutData(): UseCheckoutDataReturn {
     useEffect(() => {
         const fetchData = async () => {
             if (!user?.id || !access_token) {
+                console.log('[useCheckoutData] Missing user or access token', { userId: user?.id, hasToken: !!access_token });
                 setIsLoading(false);
                 return;
             }
@@ -49,16 +50,18 @@ export function useCheckoutData(): UseCheckoutDataReturn {
             try {
                 setIsLoading(true);
                 setError(null);
-                const startTime = performance.now();
 
+                console.log('[useCheckoutData] Fetching customer profile for user:', user.id);
                 // Fetch customer profile
                 const customerData = await getCustomerProfile(user.id, access_token);
                 if (!customerData) {
+                    console.error('[useCheckoutData] Customer profile is null');
                     setError('Failed to load customer profile');
                     setIsLoading(false);
                     return;
                 }
 
+                console.log('[useCheckoutData] Successfully loaded customer profile:', customerData.id);
                 customerIdRef.current = customerData.id;
 
                 // Fetch addresses in PARALLEL instead of sequentially
@@ -68,6 +71,7 @@ export function useCheckoutData(): UseCheckoutDataReturn {
                 // Update state together
                 setCustomer(customerData);
                 setAddresses(addressesData || []);
+                console.log('[useCheckoutData] Checkout data loaded successfully');
             } catch (err: any) {
                 console.error('[useCheckoutData] Error:', err);
                 setError(err?.message || 'Failed to load checkout data');

@@ -158,7 +158,7 @@ export default function ConfirmationPageContent({
 
     const shippingMethodName = shippingMethod?.name || t('checkout.shipping_method_standard');
     const paymentMethodName = paymentMethod?.name || 'Unknown';
-    const customerLastName = customer?.user?.last_name || 'Valued Customer';
+    const customerLastName = (typeof customer?.user === 'object' && customer.user?.last_name) || 'Valued Customer';
 
     // Loading state
     if (isLoading) {

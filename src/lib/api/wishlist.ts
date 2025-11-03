@@ -1,6 +1,42 @@
 /**
- * Wishlist API
- * Handles customer wishlists with Directus collection
+ * @fileOverview Wishlist API Module
+ * 
+ * Manages customer product wishlists for the BuyJan e-commerce platform including:
+ * - Adding products to wishlist
+ * - Removing products from wishlist
+ * - Checking wishlist status for products
+ * - Retrieving full wishlist with product details
+ * - Sharing wishlists (future feature)
+ * 
+ * Features:
+ * - Per-customer wishlists (tied to Directus user)
+ * - Product availability tracking
+ * - Date added timestamps for sorting
+ * - Easy wishlist-to-cart transfers
+ * - Bulk operations support
+ * - Privacy controls (wishlist visibility)
+ * 
+ * @module lib/api/wishlist
+ * @requires axios - HTTP client for API calls
+ * @requires @/types/collections - Type definitions for WishlistItem, etc.
+ * 
+ * @example
+ * // Add product to wishlist
+ * import { addToWishlist, isProductInWishlist } from '@/lib/api/wishlist';
+ * 
+ * const item = await addToWishlist(customerId, productId, accessToken);
+ * 
+ * // Check if product is in wishlist
+ * const inWishlist = await isProductInWishlist(customerId, productId, accessToken);
+ * 
+ * if (inWishlist) {
+ *   // Show "Remove from wishlist" button
+ * } else {
+ *   // Show "Add to wishlist" button
+ * }
+ * 
+ * // Fetch entire wishlist
+ * const wishlistItems = await getCustomerWishlist(customerId, accessToken);
  */
 
 import axios from 'axios';
@@ -161,9 +197,9 @@ export async function clearWishlist(
 ): Promise<void> {
     try {
         const wishlistResponse = await getWishlist(customerId, accessToken, { limit: 1000 });
-        
+
         await Promise.all(
-            wishlistResponse.items.map(item => 
+            wishlistResponse.items.map(item =>
                 removeFromWishlist(item.id, accessToken)
             )
         );

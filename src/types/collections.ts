@@ -38,9 +38,18 @@ export interface CustomerAddress {
     updated_at?: string;
 }
 
+export interface DirectusUser {
+    id: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+    avatar?: string;
+    status?: string;
+}
+
 export interface Customer {
     id: string;
-    user?: string | any; // Many-to-One → directus_users
+    user?: string | DirectusUser; // Many-to-One → directus_users
     phone?: string;
     date_of_birth?: string; // ISO date
     loyalty_points?: number;
@@ -75,14 +84,27 @@ export interface OrderItem {
     updated_at?: string;
 }
 
+export interface OrderAddress {
+    first_name: string;
+    last_name: string;
+    company?: string;
+    address_line_1: string;
+    address_line_2?: string;
+    city: string;
+    state?: string;
+    postal_code: string;
+    country: string;
+    phone_number?: string;
+}
+
 export interface Order {
     id: string;
     status: OrderStatus;
     order_number: string; // Unique order identifier
     customer: string; // Many-to-One → customers
     customer_email: string;
-    shipping_address: Record<string, any>; // JSON
-    billing_address: Record<string, any>; // JSON
+    shipping_address: OrderAddress; // Structured address
+    billing_address: OrderAddress; // Structured address
     subtotal: number; // decimal
     tax_rate: number; // decimal (e.g., 0.05 for 5%)
     tax_amount: number; // decimal
@@ -131,10 +153,20 @@ export interface ProductReview {
 // WISHLIST
 // ============================================================================
 
+export interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    price: number;
+    image?: string;
+    [key: string]: any; // Allow other product fields
+}
+
 export interface WishlistItem {
     id: string;
     customer: string; // Many-to-One → customers
-    product: string | any; // Many-to-One → products (can be string ID or expanded object)
+    product: string | Product; // Many-to-One → products (can be string ID or expanded object)
     date_added?: string; // Timestamp
     created_at?: string;
 }
@@ -217,7 +249,7 @@ export interface ShippingMethod {
     name_ar: string; // Arabic name
     type: 'standard' | 'express' | 'overnight' | string; // Type of shipping
     cost: number; // Base cost in OMR
-    available_countries: ShippingCountryRelation[] | any[]; // Many-to-Many relationship with countries
+    available_countries: ShippingCountryRelation[]; // Many-to-Many relationship with countries
     is_active: boolean; // Is this method active
     sort_order: number; // Sort order for display
     min_value?: number; // Minimum cart value for this method (decimal as string or number)

@@ -1,0 +1,44 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+/**
+ * Vitest configuration for unit testing
+ * 
+ * Configuration includes:
+ * - React component testing support
+ * - JSDOM environment for DOM testing
+ * - Path alias support matching tsconfig.json
+ * - Coverage reporting with v8
+ * - Test UI dashboard
+ * 
+ * @see https://vitest.dev/config/
+ */
+export default defineConfig({
+    plugins: [react()],
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        setupFiles: ['./vitest.setup.ts'],
+        coverage: {
+            provider: 'v8',
+            reporter: ['text', 'json', 'html'],
+            exclude: [
+                'node_modules/',
+                'dist/',
+                '.next/',
+                '**/*.spec.ts',
+                '**/*.test.ts',
+                '**/*.spec.tsx',
+                '**/*.test.tsx',
+                '**/types/**',
+                '**/types.ts',
+            ],
+        },
+    },
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+        },
+    },
+});

@@ -1,3 +1,44 @@
+/**
+ * @fileOverview Enhanced Products API Module
+ * 
+ * Advanced product data fetching and processing for the BuyJan e-commerce platform including:
+ * - Product fetching with comprehensive filtering and sorting
+ * - Product detail retrieval with review statistics
+ * - Image processing and optimization
+ * - Review aggregation and rating calculations
+ * - Brand and category information
+ * - Localized product information (Arabic/English)
+ * - Stock and availability tracking
+ * 
+ * Features:
+ * - Full-text search across product names and descriptions (bilingual)
+ * - Advanced filtering (category, brand, price range, stock status)
+ * - Flexible sorting options (price, name, rating)
+ * - Pagination support for large result sets
+ * - Automatic image URL processing with authentication tokens
+ * - Review statistics caching and calculation
+ * - Detailed product attributes (ingredients, usage instructions)
+ * - Safe fallback handling for missing data
+ * 
+ * @module lib/api/products
+ * @requires ./directus - Directus SDK client
+ * @requires @/lib/utils - Utility functions
+ * @requires @/types - Type definitions
+ * 
+ * @example
+ * // Fetch products with filters
+ * import { getProducts, getProduct } from '@/lib/api/products';
+ * 
+ * const { data, meta } = await getProducts(
+ *   { category: 'skincare', min_price: 20, max_price: 100 },
+ *   'price_low_high',
+ *   { page: 1, limit: 20 }
+ * );
+ * 
+ * // Fetch single product with full details
+ * const { data: product } = await getProduct('rose-perfume-100ml');
+ */
+
 import { getDirectusClient } from './directus';
 import { readItems, readItem } from '@directus/sdk';
 import { processDirectusImage } from './directus-config';
@@ -6,6 +47,13 @@ import { Product, ProductFilters, SortOption, Pagination, ReviewStats, ProductRe
 
 /**
  * Fetch review statistics for a product
+ * 
+ * Calculates average rating and total review count for a specific product.
+ * Used for fallback rating data when not included in main product fetch.
+ * 
+ * @param {string} productId - Product ID
+ * @returns {Promise<ReviewStats>} Object with average_rating and review_count
+ * @internal
  */
 async function getProductReviewStats(productId: string): Promise<ReviewStats> {
     try {
@@ -218,7 +266,7 @@ export async function getProducts(
 
             // Process images array and image_gallery - combine into single array with main_image first
             let processedImages: any[] = [];
-            
+
             // Start with main_image
             if (mainImageUrl && mainImageUrl !== '/images/placeholder-product.jpg') {
                 processedImages.push({
@@ -226,7 +274,7 @@ export async function getProducts(
                     url: mainImageUrl
                 });
             }
-            
+
             // Add image_gallery images
             if (product.image_gallery && Array.isArray(product.image_gallery) && product.image_gallery.length > 0) {
                 console.log('[Products] (getProducts) Processing', product.image_gallery.length, 'gallery images for product', product.id);
@@ -239,7 +287,7 @@ export async function getProducts(
                 processedImages.push(...galleryImages);
                 console.log('[Products] (getProducts) Processed', galleryImages.length, 'gallery images successfully');
             }
-            
+
             // Fallback to legacy images field if no image_gallery
             if (processedImages.length === 0 && product.images && Array.isArray(product.images) && product.images.length > 0) {
                 console.log('[Products] (getProducts) Processing', product.images.length, 'legacy images for product', product.id);
@@ -251,7 +299,7 @@ export async function getProducts(
                     .filter((img: any) => img !== null);
                 console.log('[Products] (getProducts) Processed', processedImages.length, 'legacy images successfully');
             }
-            
+
             if (processedImages.length === 0) {
                 console.log('[Products] (getProducts) No images to process for product', product.id);
             }
@@ -415,7 +463,7 @@ export async function getProduct(idOrSlug: string) {
 
         // Process images array and image_gallery - combine into single array with main_image first
         let processedImages: any[] = [];
-        
+
         // Start with main_image
         if (mainImageUrl && mainImageUrl !== '/images/placeholder-product.jpg') {
             processedImages.push({
@@ -423,7 +471,7 @@ export async function getProduct(idOrSlug: string) {
                 url: mainImageUrl
             });
         }
-        
+
         // Add image_gallery images
         if (product.image_gallery && Array.isArray(product.image_gallery) && product.image_gallery.length > 0) {
             console.log('[Products] Processing', product.image_gallery.length, 'gallery images for product', product.id);
@@ -436,7 +484,7 @@ export async function getProduct(idOrSlug: string) {
             processedImages.push(...galleryImages);
             console.log('[Products] Processed', galleryImages.length, 'gallery images successfully');
         }
-        
+
         // Fallback to legacy images field if no image_gallery
         if (processedImages.length === 0 && product.images && Array.isArray(product.images) && product.images.length > 0) {
             console.log('[Products] Processing', product.images.length, 'legacy images for product', product.id);
@@ -448,11 +496,11 @@ export async function getProduct(idOrSlug: string) {
                 .filter((img: any) => img !== null);
             console.log('[Products] Processed', processedImages.length, 'legacy images successfully');
         }
-        
+
         if (processedImages.length === 0) {
             console.log('[Products] No images to process for product', product.id);
         }
-        
+
         product.processedImages = processedImages.length > 0 ? processedImages : undefined;
         product.images = processedImages.length > 0 ? processedImages : product.images || [];
 

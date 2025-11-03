@@ -63,7 +63,7 @@ export default function WishlistView({ locale }: WishlistViewProps) {
             });
 
             const validItems = wishlistItems.filter(item => {
-                const productId = item.product?.id ?? item.product;
+                const productId = typeof item.product === 'object' ? item.product?.id : item.product;
                 if (!productId) {
                     console.warn('[WishlistView] Skipping wishlist item without product ID:', JSON.stringify(item));
                     return false;
@@ -118,8 +118,10 @@ export default function WishlistView({ locale }: WishlistViewProps) {
             setLoadingItems((prev) => ({ ...prev, [item.id]: true }));
             try {
                 addItem(item.productData, 1);
-                const productId = item.product?.id ?? item.product;
-                handleRemove(productId, item.id);
+                const productId = typeof item.product === 'object' ? item.product?.id : item.product;
+                if (productId) {
+                    handleRemove(productId, item.id);
+                }
             } finally {
                 setLoadingItems((prev) => ({ ...prev, [item.id]: false }));
             }
@@ -360,8 +362,10 @@ export default function WishlistView({ locale }: WishlistViewProps) {
 
                                         <button
                                             onClick={() => {
-                                                const productId = item.product?.id ?? item.product;
-                                                handleRemove(productId, item.id);
+                                                const productId = typeof item.product === 'object' ? item.product?.id : item.product;
+                                                if (productId) {
+                                                    handleRemove(productId, item.id);
+                                                }
                                             }}
                                             className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium rounded-lg transition text-sm border border-red-200"
                                         >

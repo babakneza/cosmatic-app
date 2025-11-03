@@ -201,7 +201,7 @@ export interface GovernorateShipping {
 // Payment types
 export interface PaymentMethod {
     id: string;
-    type: 'credit_card' | 'debit_card' | 'bank_transfer' | 'cash_on_delivery' | 'omannet';
+    type: 'credit_card' | 'debit_card' | 'bank_transfer' | 'cash_on_delivery' | 'omannet' | 'paypal';
     name: string;
     name_ar?: string;
     icon?: string;

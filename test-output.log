@@ -1,0 +1,24 @@
+
+> cosmatic-app-oman@0.1.0 test:unit
+> vitest run
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+[7m[1m[36m RUN [39m[22m[27m [36mv1.6.1[39m [90mC:/projects/cosmatic_app_directus[39m
+
+ [32mΓ£ô[39m tests/unit/api/paypal-endpoints.spec.ts [2m ([22m[2m28 tests[22m[2m)[22m[90m 218[2mms[22m[39m
+ [33mΓ¥»[39m tests/unit/paypal/validation.spec.ts [2m ([22m[2m54 tests[22m [2m|[22m [31m2 failed[39m[2m)[22m[90m 201[2mms[22m[39m
+[31m   [33mΓ¥»[31m tests/unit/paypal/validation.spec.ts[2m > [22mPayPal Payment Validation[2m > [22mvalidatePhoneNumber[2m > [22mshould validate correct Omani phone numbers[39m
+[31m     ΓåÆ expected false to be true // Object.is equality[39m
+[31m   [33mΓ¥»[31m tests/unit/paypal/validation.spec.ts[2m > [22mPayPal Payment Validation[2m > [22mEdge Cases & Security[2m > [22mshould handle special unicode characters[39m
+[31m     ΓåÆ expected false to be true // Object.is equality[39m
+ [33mΓ¥»[39m tests/unit/paypal/hooks.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [32mΓ£ô[39m tests/unit/paypal/create-order.spec.ts [2m ([22m[2m16 tests[22m[2m)[22m[90m 50[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/paypal/capture-order.spec.ts [2m ([22m[2m22 tests[22m[2m)[22m[90m 81[2mms[22m[39m
+ [33mΓ¥»[39m tests/checkout-shipping-infinite-loop-fix.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [33mΓ¥»[39m tests/focused-persistence.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [33mΓ¥»[39m tests/persistence-diagnostic.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [32mΓ£ô[39m tests/unit/paypal/config.spec.ts [2m ([22m[2m12 tests[22m[2m)[22m[90m 41[2mms[22m[39m
+ [33mΓ¥»[39m tests/debug-auth.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [33mΓ¥»[39m tests/auth-persistence.spec.ts [2m ([22m[2m0 test[22m[2m)[22m
+ [33mΓ¥»[39m tests/debug-hydration.spec.ts [2m ([22m[2m0 test[22m[2m)[22m

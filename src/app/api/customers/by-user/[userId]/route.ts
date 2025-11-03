@@ -51,6 +51,8 @@ export async function GET(
             .with(staticToken(adminToken))
             .with(rest());
 
+        console.log('[Customers API] Querying customers for user:', userId);
+        
         // Query customers filtered by user ID
         const customers = await client.request(
             readItems('customers', {
@@ -61,15 +63,21 @@ export async function GET(
             })
         );
 
+        console.log('[Customers API] Query result:', {
+            userId,
+            customersCount: customers?.length || 0,
+            firstCustomer: customers?.[0] || null
+        });
+
         if (!customers || customers.length === 0) {
-            console.log('[Customers API] Customer profile not found for user:', userId);
+            console.log('[Customers API] ❌ Customer profile not found for user:', userId);
             return NextResponse.json(
                 { data: null },
                 { status: 404 }
             );
         }
 
-        console.log('[Customers API] Fetched customer profile for user:', userId);
+        console.log('[Customers API] ✅ Fetched customer profile for user:', userId);
 
         return NextResponse.json(
             { data: customers[0] },

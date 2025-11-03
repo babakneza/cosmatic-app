@@ -7,7 +7,7 @@ import { useAuth } from '@/store/auth';
 import { useCartStore } from '@/store/cart';
 import { useCheckoutStore, CheckoutStep } from '@/store/checkout';
 import { Address, PaymentMethod, ShippingMethod, Locale } from '@/types';
-import { CheckoutProgress, ShippingAddressForm, ShippingMethodSelector, PaymentMethodSelector, OrderReview } from '@/components/checkout';
+import { CheckoutProgress, ShippingAddressForm, ShippingMethodSelector, PaymentMethodSelector, OrderReview, PayPalButton } from '@/components/checkout';
 import { calculateCartTotals } from '@/lib/currency';
 import { useCheckoutData } from '@/hooks/useCheckoutData';
 import { createOrder } from '@/lib/api/orders';
@@ -488,27 +488,110 @@ export default function CheckoutPageContent({ locale }: CheckoutPageContentProps
                 {step === 'review' && shippingAddress && shippingMethod && paymentMethod && (
                     <div>
                         <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{t('checkout.step_review')}</h2>
-                        <OrderReview
-                            items={cartItems}
-                            shippingAddress={shippingAddress}
-                            billingAddress={billingAddress || undefined}
-                            shippingMethod={shippingMethod}
-                            paymentMethod={paymentMethod}
-                            totals={{
-                                subtotal: totals.subtotal,
-                                shipping: totals.shipping,
-                                tax: totals.tax,
-                                total: totals.total,
-                            }}
-                            locale={typedLocale}
-                            onEdit={(section) => {
-                                if (section === 'address') setStep('shipping');
-                                else if (section === 'shipping') setStep('shipping_method');
-                                else if (section === 'payment') setStep('payment');
-                            }}
-                            onConfirm={handleOrderConfirm}
-                            isLoading={isLoading}
-                        />
+                        {paymentMethod.type === 'paypal' ? (
+                            // PayPal Payment Flow
+                            <div>
+                                <OrderReview
+                                    items={cartItems}
+                                    shippingAddress={shippingAddress}
+                                    billingAddress={billingAddress || undefined}
+                                    shippingMethod={shippingMethod}
+                                    paymentMethod={paymentMethod}
+                                    totals={{
+                                        subtotal: totals.subtotal,
+                                        shipping: totals.shipping,
+                                        tax: totals.tax,
+                                        total: totals.total,
+                                    }}
+                                    locale={typedLocale}
+                                    onEdit={(section) => {
+                                        if (section === 'address') setStep('shipping');
+                                        else if (section === 'shipping') setStep('shipping_method');
+                                        else if (section === 'payment') setStep('payment');
+                                    }}
+                                    onConfirm={() => { }} // PayPal button handles the flow
+                                    isLoading={false}
+                                />
+                                <div className="mt-6">
+                                    {!user || !customer || !access_token ? (
+                                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                            <p className="text-sm text-yellow-800 mb-3">
+                                                {t('checkout.login_required_for_payment')}
+                                            </p>
+                                            <button
+                                                onClick={() => {
+                                                    // Store return URL and redirect to login
+                                                    localStorage.setItem('returnAfterLogin', `/${locale}/checkout`);
+                                                    router.push(`/${locale}/auth`);
+                                                }}
+                                                className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                                            >
+                                                {t('checkout.login_button')}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <PayPalButton
+                                            cartItems={cartItems}
+                                            totals={totals}
+                                            customer_email={shippingAddress.email}
+                                            shipping_address={shippingAddress}
+                                            billing_address={billingAddress || shippingAddress}
+                                            customerId={customer.id || user.id}
+                                            access_token={access_token}
+                                            locale={typedLocale}
+                                            onSuccess={(transactionId: string, orderData: any) => {
+                                                // Navigate to confirmation page with order details
+                                                console.log('[Checkout] PayPal payment successful, redirecting to confirmation');
+                                                console.log('[Checkout] Order data:', orderData);
+                                                setIsRedirectingToConfirmation(true);
+                                                clearCart();
+
+                                                // Extract order ID and order number from the response
+                                                const orderId = orderData?.id;
+                                                const orderNumber = orderData?.order_number;
+
+                                                if (orderId && orderNumber) {
+                                                    // Redirect to confirmation page with order details
+                                                    router.push(`/${locale}/checkout/confirmation?orderId=${orderId}&orderNumber=${orderNumber}`);
+                                                } else {
+                                                    console.error('[Checkout] Missing order ID or order number in response:', { orderId, orderNumber });
+                                                    // Fallback: redirect to confirmation page without parameters
+                                                    // The page will try to fetch order details
+                                                    router.push(`/${locale}/checkout/confirmation`);
+                                                }
+                                            }}
+                                            onError={(error: string) => {
+                                                console.error('PayPal payment error:', error);
+                                                // Error is displayed in PayPalButton component
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            // Other Payment Methods Flow
+                            <OrderReview
+                                items={cartItems}
+                                shippingAddress={shippingAddress}
+                                billingAddress={billingAddress || undefined}
+                                shippingMethod={shippingMethod}
+                                paymentMethod={paymentMethod}
+                                totals={{
+                                    subtotal: totals.subtotal,
+                                    shipping: totals.shipping,
+                                    tax: totals.tax,
+                                    total: totals.total,
+                                }}
+                                locale={typedLocale}
+                                onEdit={(section) => {
+                                    if (section === 'address') setStep('shipping');
+                                    else if (section === 'shipping') setStep('shipping_method');
+                                    else if (section === 'payment') setStep('payment');
+                                }}
+                                onConfirm={handleOrderConfirm}
+                                isLoading={isLoading}
+                            />
+                        )}
                     </div>
                 )}
             </div>

@@ -1,6 +1,51 @@
 /**
- * Orders API
- * Handles order creation, retrieval, and management
+ * @fileOverview Orders API Module
+ * 
+ * Comprehensive order management for the BuyJan e-commerce platform including:
+ * - Order creation with automatic order number generation
+ * - Order retrieval and status management
+ * - Order item management
+ * - Address formatting and validation
+ * - Payment tracking
+ * 
+ * Features:
+ * - Automatic generation of unique order numbers (ORD-YYYYMMDD-XXXXXX)
+ * - Order status tracking (pending, processing, shipped, delivered, cancelled)
+ * - Payment status monitoring (pending, completed, failed)
+ * - Support for multiple addresses (shipping and billing)
+ * - Tax and shipping calculation integration
+ * - Discount/coupon application tracking
+ * 
+ * @module lib/api/orders
+ * @requires axios - HTTP client for API calls
+ * @requires @/types/collections - Type definitions for Order, OrderItem, etc.
+ * 
+ * @example
+ * // Create a new order
+ * import { createOrder, formatAddressAsJSON } from '@/lib/api/orders';
+ * 
+ * const orderData = {
+ *   customer_email: 'customer@example.com',
+ *   shipping_address: formatAddressAsJSON(shippingAddress),
+ *   billing_address: formatAddressAsJSON(billingAddress),
+ *   items: [
+ *     {
+ *       product: 'prod-123',
+ *       product_name: 'Rose Perfume',
+ *       quantity: 2,
+ *       unit_price: 45.00,
+ *       line_total: 90.00
+ *     }
+ *   ],
+ *   subtotal: 90.00,
+ *   tax_rate: 0.05,
+ *   tax_amount: 4.50,
+ *   shipping_cost: 5.00,
+ *   total: 99.50,
+ *   payment_method: 'paypal'
+ * };
+ * 
+ * const order = await createOrder(customerId, accessToken, orderData);
  */
 
 import axios from 'axios';
@@ -60,7 +105,7 @@ export function formatAddressAsJSON(address: Address | CustomerAddress, addressT
 
     // Address from checkout form - convert to Directus CustomerAddress format
     const a = address as Address;
-    
+
     // Parse full_name into first_name and last_name
     const fullName = (a.full_name || '').trim();
     const nameParts = fullName.split(/\s+/);
@@ -130,8 +175,30 @@ export async function createOrder(
     }
 ): Promise<Order> {
     try {
+        // Get the base URL for API calls
+        // In development, always use localhost:3000 for server-side calls
+        // In production, use NEXT_PUBLIC_SITE_URL
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        let baseUrl: string;
+
+        if (isDevelopment) {
+            baseUrl = 'http://localhost:3000';
+            console.log('[Orders] Using development server-side URL:', baseUrl);
+        } else {
+            baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+            if (baseUrl === 'http://localhost:3000' && !process.env.NEXT_PUBLIC_SITE_URL) {
+                console.warn('[Orders] No NEXT_PUBLIC_SITE_URL configured in production, using fallback');
+            } else {
+                console.log('[Orders] Using production URL:', baseUrl);
+            }
+        }
+
+        // Construct absolute URL
+        const url = `${baseUrl}/api/orders`;
+        console.log('[Orders] Creating order at:', url);
+
         const response = await axios.post(
-            '/api/orders',
+            url,
             {
                 customer: customerId,
                 status: 'pending',
@@ -152,6 +219,11 @@ export async function createOrder(
         return order;
     } catch (error: any) {
         console.error('[Orders] Failed to create order:', error.message);
+        console.error('[Orders] Error details:', {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data,
+        });
         throw error;
     }
 }

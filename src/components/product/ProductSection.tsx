@@ -23,7 +23,7 @@ export function ProductSection({
     viewAllLink,
     className,
 }: ProductSectionProps) {
-    const t = useTranslations();
+    const t = useTranslations('common');
     const rtl = isRTL(locale);
     const fontFamily = getFontFamily(locale);
 
@@ -54,7 +54,7 @@ export function ProductSection({
                                 fontFamily
                             )}
                         >
-                            <span>{t('common.view_all')}</span>
+                            <span>{t('view_all')}</span>
                             {rtl ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
                         </Link>
                     )}

@@ -1,6 +1,58 @@
 /**
- * Customers API
- * Handles customer profile and address management
+ * @fileOverview Customers API Module
+ * 
+ * Comprehensive customer profile and address management for the BuyJan e-commerce platform including:
+ * - Customer profile creation (auto-created on user login/registration)
+ * - Customer profile retrieval and updates
+ * - Customer address management (add, update, delete)
+ * - Default shipping and billing address configuration
+ * - Loyalty points tracking
+ * - Customer data enrichment (phone, DOB, etc.)
+ * 
+ * Features:
+ * - Automatic customer profile creation linked to Directus user
+ * - Support for multiple shipping/billing addresses
+ * - Default address selection for quick checkout
+ * - Phone number and date of birth tracking
+ * - Loyalty points management
+ * - Address type classification (home, office, etc.)
+ * - Full address history retention
+ * - Timezone-aware timestamps
+ * 
+ * @module lib/api/customers
+ * @requires axios - HTTP client for API calls
+ * @requires @/types/collections - Type definitions for Customer, CustomerAddress
+ * 
+ * @example
+ * // Create customer profile after user registration
+ * import { createCustomerProfile } from '@/lib/api/customers';
+ * 
+ * const customer = await createCustomerProfile(
+ *   userId,
+ *   accessToken,
+ *   {
+ *     phone: '9689123456',
+ *     date_of_birth: '1990-01-15'
+ *   }
+ * );
+ * 
+ * // Create customer address
+ * const address = await createCustomerAddress(
+ *   customerId,
+ *   accessToken,
+ *   {
+ *     first_name: 'Ahmed',
+ *     last_name: 'Al Balushi',
+ *     address_line_1: 'Building 123',
+ *     city: 'Muscat',
+ *     postal_code: '113',
+ *     countries: 'OM',
+ *     type: 'home'
+ *   }
+ * );
+ * 
+ * // Set as default shipping address
+ * await setDefaultShippingAddress(customerId, addressId, accessToken);
  */
 
 import axios from 'axios';
@@ -37,6 +89,11 @@ export async function createCustomerProfile(
         return response.data.data;
     } catch (error: any) {
         console.error('[Customers] Failed to create customer profile:', error.message);
+        console.error('[Customers] Error details:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+        });
         throw error;
     }
 }
@@ -59,16 +116,23 @@ export async function getCustomerProfile(
         );
 
         if (!response.data.data) {
+            console.log('[Customers] Customer profile data is null/undefined for user:', userId);
             return null;
         }
 
+        console.log('[Customers] Successfully fetched customer profile for user:', userId);
         return response.data.data;
     } catch (error: any) {
         if (error.response?.status === 404) {
-            console.log('[Customers] Customer profile not found for user:', userId);
+            console.log('[Customers] Customer profile not found (404) for user:', userId);
             return null;
         }
         console.error('[Customers] Failed to fetch customer profile:', error.message);
+        console.error('[Customers] Error details:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+        });
         throw error;
     }
 }

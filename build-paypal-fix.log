@@ -1,0 +1,24 @@
+
+> cosmatic-app-oman@0.1.0 build
+> next build
+
+   Γû▓ Next.js 16.0.1 (Turbopack)
+   - Environments: .env.production.local, .env.local
+
+ ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully in 74s
+   Running TypeScript ...
+Failed to compile.
+
+./src/lib/paypal/config.ts:73:27
+Type error: 'PayPalHttpClient' refers to a value, but is being used as a type here. Did you mean 'typeof PayPalHttpClient'?
+
+  71 |  * Initialize PayPal HTTP Client (lazy initialization)
+  72 |  */
+> 73 | let paypalClientInstance: PayPalHttpClient | null = null;
+     |                           ^
+  74 |
+  75 | function getPayPalClient(): PayPalHttpClient {
+  76 |     if (!paypalClientInstance) {
+Next.js build worker exited with code: 1 and signal: null

@@ -1,6 +1,48 @@
 /**
- * Product Reviews API
- * Handles product reviews and ratings
+ * @fileOverview Product Reviews API Module
+ * 
+ * Manages product reviews and ratings for the BuyJan e-commerce platform including:
+ * - Review creation with automated status workflow
+ * - Review retrieval with filtering and pagination
+ * - Review management (update, delete, approval)
+ * - Rating aggregation and statistics
+ * - Verified purchase tracking
+ * - Helpful/unhelpful voting
+ * 
+ * Features:
+ * - Reviews start in 'draft' status (automatic moderation)
+ * - Support for bilingual reviews (English and Arabic)
+ * - Rating from 1-5 stars
+ * - Optional title and detailed comments
+ * - Verification of purchase history
+ * - Helpful vote tracking for review discovery
+ * - Timestamped review history
+ * 
+ * @module lib/api/reviews
+ * @requires axios - HTTP client for API calls
+ * @requires @/types/collections - Type definitions for ProductReview, etc.
+ * 
+ * @example
+ * // Create a product review
+ * import { createReview } from '@/lib/api/reviews';
+ * 
+ * const review = await createReview(
+ *   customerId,
+ *   productId,
+ *   accessToken,
+ *   {
+ *     rating: 5,
+ *     title: 'Excellent quality!',
+ *     comment: 'Very satisfied with this product. Fast delivery too!'
+ *   }
+ * );
+ * 
+ * // Fetch product reviews with pagination
+ * const { data: reviews, total } = await getProductReviews(productId, {
+ *   status: 'published',
+ *   limit: 10,
+ *   offset: 0
+ * });
  */
 
 import axios from 'axios';

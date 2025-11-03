@@ -1,4 +1,5 @@
 // Authentication types
+import type { Customer } from './collections';
 
 export interface AuthUser {
     id: string;
@@ -58,7 +59,7 @@ export interface AuthState {
     error: AuthError | null;
     remember_me: boolean;
     customer_id: string | null;
-    customer_profile: any | null;
+    customer_profile: Customer | null;
     token_expires_at: number | null;
     _hasHydrated?: boolean;
     redirectUrl: string | null;

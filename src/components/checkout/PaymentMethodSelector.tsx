@@ -15,6 +15,13 @@ interface PaymentMethodSelectorProps {
 // Default payment methods available
 const DEFAULT_PAYMENT_METHODS: PaymentMethod[] = [
     {
+        id: 'paypal',
+        type: 'paypal',
+        name: 'PayPal',
+        name_ar: 'باي بال',
+        is_available: true,
+    },
+    {
         id: 'cash_on_delivery',
         type: 'cash_on_delivery',
         name: 'Cash on Delivery',
@@ -72,6 +79,13 @@ export default function PaymentMethodSelector({
 
     const getPaymentIcon = (type: string) => {
         switch (type) {
+            case 'paypal':
+                return (
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7.076 21.337c-.924.365-1.922.37-2.852.117-.922-.25-1.666-.714-2.133-1.371-.467-.657-.7-1.505-.632-2.54.034-.547.089-1.104.167-1.671.079-.572.167-1.149.267-1.732l.273-1.758c.101-.649.213-1.305.337-1.968.124-.663.251-1.328.382-1.995.131-.667.265-1.336.403-2.007.139-.671.281-1.344.428-2.02.146-.677.296-1.355.448-2.036.152-.681.307-1.364.463-2.047l.453-1.823c.158-.64.32-1.281.485-1.922.163-.638.328-1.276.495-1.912.167-.636.336-1.272.507-1.908.172-.636.346-1.272.521-1.908.176-.636.352-1.272.529-1.908.177-.636.355-1.272.535-1.908.179-.636.36-1.272.541-1.908.181-.636.364-1.272.548-1.908.185-.636.371-1.272.558-1.908.189-.637.378-1.273.568-1.908.191-.637.382-1.273.575-1.908.193-.637.387-1.273.582-1.909.196-.637.392-1.273.588-1.910.196-.636.393-1.272.591-1.908.197-.636.395-1.272.594-1.908.199-.636.398-1.272.598-1.908.2-.636.4-1.272.601-1.908.201-.636.402-1.272.604-1.908.202-.636.404-1.272.607-1.908.203-.636.407-1.272.611-1.908" />
+                        <text x="0" y="18" fontSize="8" fill="currentColor">PayPal</text>
+                    </svg>
+                );
             case 'credit_card':
             case 'debit_card':
                 return (
@@ -102,8 +116,8 @@ export default function PaymentMethodSelector({
                     <label
                         key={method.id}
                         className={`flex items-start md:items-center p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all ${selected?.id === method.id
-                                ? 'border-blue-600 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300 bg-white'
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300 bg-white'
                             }`}
                     >
                         <input
